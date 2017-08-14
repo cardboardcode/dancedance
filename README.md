@@ -25,9 +25,7 @@ Reading Week |  |
 ### Objective: Design a dance-tracker which detects the designated dance step listed below.
 
 
-> ![](resources/images/frontback.gif)   
-> ![](resources/images/handwave.gif)
-> ![](resources/images/jumping.gif)
+> ![](resources/images/frontback.gif) ![](resources/images/handwave.gif) ![](resources/images/jumping.gif)
 
 > ![](resources/images/jumpingjack.gif)
 > ![](resources/images/squatturnclap.gif)
