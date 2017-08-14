@@ -24,14 +24,15 @@ Reading Week |  |
 
 ### Objective: Design a dance-tracker which detects the designated dance step listed below.
 
-## Test Frames
 
 > ![](resources/images/frontback.gif)   
 > ![](resources/images/handwave.gif)
 > ![](resources/images/jumping.gif)
+
 > ![](resources/images/jumpingjack.gif)
 > ![](resources/images/squatturnclap.gif)
 > ![](resources/images/steering.gif)
+
 > ![](resources/images/turnclap.gif)
 > ![](resources/images/window.gif)
 > ![](resources/images/windows360.gif)
