@@ -22,7 +22,9 @@ Reading Week |  |
 
 ## Project Requirements
 
-### Objective: Design a dance-tracker which detects the designated dance step listed below.
+#### Objective: 
+
+> Design a dance-tracker which detects the designated dance step listed below.
 
 
 > ![](resources/images/frontback.gif) ![](resources/images/handwave.gif) ![](resources/images/jumping.gif)
