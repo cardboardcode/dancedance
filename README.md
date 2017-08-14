@@ -1,4 +1,4 @@
-# CS2010 AY17/18 CG3002 Dance-Dance Project
+# CG3002 AY17/18 Dance-Dance Project
 
 ## Schedule
 
