@@ -1,8 +1,8 @@
 # CS2010 AY17/18 CG3002 Dance-Dance Project
 
-## Project Milestones
+## Schedule
 
-Deadline | Task | Comments
+Week No. | Happening | Remarks
 ---|---|---
 1st Week | Lecture: Project Overview |
 2nd Week | Lecture: Introduction To Hardware Platform |
