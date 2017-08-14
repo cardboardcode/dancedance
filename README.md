@@ -1,5 +1,16 @@
 # CG3002 AY17/18 Dance-Dance Project
 
+## Summary
+
+* [Requirements][req]
+* [Developement][dev]
+
+
+#### Objective: 
+
+> Design a dance-tracker which detects the designated dance step listed below.
+
+
 ## Schedule
 
 Week No. | Happening | Remarks
@@ -20,12 +31,7 @@ Recess Week | Rest? |
 13th Week | Final Evaluation (All Moves) |
 Reading Week |  |
 
-## Project Requirements
-
-#### Objective: 
-
-> Design a dance-tracker which detects the designated dance step listed below.
-
+## Dance Moves
 
 > ![](resources/images/frontback.gif) ![](resources/images/handwave.gif) ![](resources/images/jumping.gif)
 
@@ -38,3 +44,5 @@ JumpingJack  |  Squat-Turn-Clap   |  Steering
 > ![](resources/images/turnclap.gif) ![](resources/images/window.gif) ![](resources/images/windows360.gif)
 
 Turn-Clap  |  Windows   |  Windows360
+
+[req]: https://github.com/cardboardcode/dancedance/blob/master/resources/docs/CG3002-dance.pdf
