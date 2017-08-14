@@ -1,13 +1,13 @@
 ## Dance Moves
 
-> ![](resources/images/frontback.gif) ![](resources/images/handwave.gif) ![](resources/images/jumping.gif)
+> ![](images/frontback.gif) ![](images/handwave.gif) ![](images/jumping.gif)
 
 Front-Back  |  HandWave   |  Jumping
 
-> ![](resources/images/jumpingjack.gif) ![](resources/images/squatturnclap.gif) ![](resources/images/steering.gif)
+> ![](images/jumpingjack.gif) ![](images/squatturnclap.gif) ![](images/steering.gif)
 
 JumpingJack  |  Squat-Turn-Clap   |  Steering
 
-> ![](resources/images/turnclap.gif) ![](resources/images/window.gif) ![](resources/images/windows360.gif)
+> ![](images/turnclap.gif) ![](images/window.gif) ![](images/windows360.gif)
 
 Turn-Clap  |  Windows   |  Windows360
