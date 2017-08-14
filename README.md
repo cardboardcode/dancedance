@@ -3,6 +3,7 @@
 ## Summary
 
 * [Requirements][req]
+* [Dance Moves][dance]
 * [Developement][dev]
 
 
@@ -31,18 +32,6 @@ Recess Week | Rest? |
 13th Week | Final Evaluation (All Moves) |
 Reading Week |  |
 
-## Dance Moves
-
-> ![](resources/images/frontback.gif) ![](resources/images/handwave.gif) ![](resources/images/jumping.gif)
-
-Front-Back  |  HandWave   |  Jumping
-
-> ![](resources/images/jumpingjack.gif) ![](resources/images/squatturnclap.gif) ![](resources/images/steering.gif)
-
-JumpingJack  |  Squat-Turn-Clap   |  Steering
-
-> ![](resources/images/turnclap.gif) ![](resources/images/window.gif) ![](resources/images/windows360.gif)
-
-Turn-Clap  |  Windows   |  Windows360
-
 [req]: https://github.com/cardboardcode/dancedance/blob/master/resources/docs/CG3002-dance.pdf
+
+[dance]:https://github.com/cardboardcode/dancedance/blob/master/resources/dancemoves.md
