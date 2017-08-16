@@ -4,6 +4,7 @@
 
 * [Requirements][req]
 * [Dance Moves][dance]
+* [About Us][about]
 * [Developement][dev]
 
 
@@ -35,3 +36,5 @@ Reading Week |  |
 [req]: https://github.com/cardboardcode/dancedance/blob/master/resources/docs/CG3002-dance.pdf
 
 [dance]:https://github.com/cardboardcode/dancedance/blob/master/resources/dancemoves.md
+
+[about]:https://github.com/cardboardcode/dancedance/blob/master/resources/about.md
