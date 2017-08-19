@@ -2,7 +2,7 @@
 
 [return to Summary][return]
 
-> ![](images/frontback.gif) ![](images/handwave.gif) ![](images/jumping.gif)
+> ![](images/frontback.gif) ![](images/handwave.gif) ![](images/jumping.gif) ![](images/sidestep.gif)
 
 Front-Back  |  HandWave   |  Jumping
 
