@@ -17,7 +17,7 @@
 
 Week No. | Happening | Remarks
 ---|---|---
-1st Week | Lecture: Project Overview |
+~1st Week~ | ~Lecture: Project Overview~ | Done
 2nd Week | Lecture: Introduction To Hardware Platform |
 3rd Week | Lecture: Communication and Firmware |
 4th Week | Design Report & Lecture: System Architecture & Machine Learning Basics |
