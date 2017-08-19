@@ -4,7 +4,7 @@
 
 > ![](images/frontback.gif) ![](images/handwave.gif) ![](images/jumping.gif) ![](images/sidestep.gif)
 
-Front-Back  |  HandWave   |  Jumping
+Front-Back  |  HandWave   |  Jumping | Side-Step
 
 > ![](images/jumpingjack.gif) ![](images/squatturnclap.gif) ![](images/steering.gif)
 
