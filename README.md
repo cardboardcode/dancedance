@@ -5,7 +5,7 @@
 * [Requirements][req]
 * [Dance Moves][dance]
 * [About Us][about]
-* [Developement][dev]
+* [Development][dev]
 
 
 #### Objective: 
