@@ -2,9 +2,9 @@
   <img src="resources/images/main.gif">
 </p>
 
-# CG3002 AY17/18 Dance-Dance Project
+# <p align="center"> CG3002 AY17/18 Dance-Dance Project </p>
 
-<p align="center"> Progress </p>
+## <p align="center"> Progress </p>
 
 ![](resources/images/progress/PROGRESS_BAR1.png)
 
