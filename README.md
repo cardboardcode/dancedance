@@ -1,4 +1,12 @@
+<p align="center">
+  <img src="resources/images/main.gif">
+</p>
+
 # CG3002 AY17/18 Dance-Dance Project
+
+## Progress 
+
+![](resources/images/progress/PROGRESS_BAR1.png)
 
 ## Summary
 
