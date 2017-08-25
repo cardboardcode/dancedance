@@ -1,7 +1,6 @@
 ## Dance Moves
 
-[Supersize it][supersize]
-[return to Summary][return]
+[Return to Summary][return]
 
 # Front-Back
 ![](images/highgif/frontback.gif) 
