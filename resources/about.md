@@ -1,5 +1,5 @@
 # About Us
----
+[Return to Summary][return]
 
 > We are a team based in the [School of Computing, National University of Singapore](http://www.comp.nus.edu.sg), doing this project for our [**CG3002**](https://myaces.nus.edu.sg/cors/jsp/report/ModuleDetailedInfo.jsp?acad_y=2014/2015&sem_c=1&mod_c=CG3002) module. 
 
@@ -53,3 +53,6 @@
 *    Aspects/tools in charge of: 
 *    Features implemented:
 * Other major contributions: 
+
+
+[return]: https://github.com/cardboardcode/dancedance
