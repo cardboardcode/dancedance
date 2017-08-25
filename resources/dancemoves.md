@@ -1,6 +1,7 @@
 ## Dance Moves
 
-[Supersize it][supersize]
+[Supersize it][supersize] [Warning: Your browser will lag.]
+
 [return to Summary][return]
 
 > ![](images/frontback.gif) ![](images/handwave.gif) ![](images/jumping.gif) ![](images/sidestep.gif)
