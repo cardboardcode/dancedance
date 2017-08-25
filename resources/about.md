@@ -12,17 +12,14 @@
 *   Components in charge of: [Hardware]()
 *   Aspects/tools in charge of: Team Lead, GitHub Project Manager, Project Git-Page Editor
 *   Features implemented:
-    -
-*   Other major contribution:
-    -   
+*   Other major contribution:   
     
 ### Chen Si Dai  [@sidai](https://github.com/sidai)
 <img src="images/members/sidai.png" height="200p" width="150p"> <br>
 *   Components in charge of : [Comms]()
-*   Aspects/tools in charge of: Code testing, Code quality
+*   Aspects/tools in charge of: 
 *   Features implemented:
 * Other major contributions: 
-    -
 
 ### Gary Goh  [@garygjy](https://github.com/garygjy)<br>
 <img src="images/members/garygoh.png" height="200p" width="150p"> <br>
@@ -31,7 +28,6 @@
 *    Aspects/tools in charge of: 
 *    Features implemented:
 * Other major contributions: 
-    - 
 
 ### R Dheeraj  [@dheerajaraj](https://github.com/dheerajaraj) <br>
 <img src="images/members/dheeraj.png" height="200p" width="150p"> <br>
@@ -40,8 +36,6 @@
 *    Aspects/tools in charge of: 
 *    Features implemented:
 * Other major contributions: 
-    -
-
 
 ### Wong Jeremy Jun Wen  [@snowfeline](https://github.com/snowfeline) <br>
 <img src="images/members/jeremy.png" height="200p" width="150p"> <br>
@@ -50,7 +44,6 @@
 *    Aspects/tools in charge of: 
 *    Features implemented:
 * Other major contributions: 
-    -
 
 
 ### Foo Yi Hao, Zachary  [@stylishgoldpen](https://github.com/stylishgoldpen) <br>
@@ -60,4 +53,3 @@
 *    Aspects/tools in charge of: 
 *    Features implemented:
 * Other major contributions: 
-    -
