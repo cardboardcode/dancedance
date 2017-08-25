@@ -4,7 +4,7 @@
 
 # CG3002 AY17/18 Dance-Dance Project
 
-## Progress 
+<p style="text-align: center;"> ## Progress </p>
 
 ![](resources/images/progress/PROGRESS_BAR1.png)
 
