@@ -1,5 +1,6 @@
 ## Dance Moves
 
+[Supersize it][supersize]
 [return to Summary][return]
 
 > ![](images/frontback.gif) ![](images/handwave.gif) ![](images/jumping.gif) ![](images/sidestep.gif)
@@ -15,3 +16,5 @@ JumpingJack  |  Squat-Turn-Clap   |  Steering
 Turn-Clap  |  Windows   |  Windows360
 
 [return]: https://github.com/cardboardcode/dancedance
+[supersize]: https://github.com/cardboardcode/dancedance/blob/master/resources/superdancemoves.md
+
