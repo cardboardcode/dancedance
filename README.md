@@ -6,7 +6,7 @@
 
 ## <p align="center"> Progress </p>
 
-![](resources/images/progress/PROGRESS_BAR1.png)
+![](resources/images/progress/PROGRESS_BAR2.png)
 
 ## Summary
 
