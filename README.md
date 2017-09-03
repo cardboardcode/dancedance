@@ -27,7 +27,7 @@ Week No. | Happening | Remarks
 ---|---|---
 ~1st Week~ | ~Lecture: Project Overview~ | Done
 ~2nd Week~ | ~Lecture: Introduction To Hardware Platform~ | Gone
-3rd Week | Lecture: Communication and Firmware |
+~3rd Week~ | ~Lecture: Communication and Firmware~ | Poof
 4th Week | Design Report & Lecture: System Architecture & Machine Learning Basics |
 5th Week | Feedback on Design |
 6th Week | Progress Checkpoint |
