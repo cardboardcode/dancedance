@@ -5,10 +5,10 @@
 > This section details the developmental progress of the project, showcasing variantions as the team undergoes iterative prototyping. 
 
 ## Content
-> [Overall System Architecture](#overall-system-architecture)
-> [Circuit Diagram](#circuit-diagram)
-> [Use Case Diagram](#use-case-diagram)
-> [Visualisation](#visualisation)
+> * [Overall System Architecture](#overall-system-architecture)
+> * [Circuit Diagram](#circuit-diagram)
+> * [Use Case Diagram](#use-case-diagram)
+> * [Visualisation](#visualisation)
 
 # Overall System Architecture
 ![](images/sys_architecture.png) 
