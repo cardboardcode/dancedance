@@ -6,3 +6,4 @@
 > * [Current Sensor INA169](https://github.com/cardboardcode/dancedance/blob/master/resources/docs/INA169_CURRENT_SENSOR.pdf)
 > * [Raspberry Pi 3](https://github.com/cardboardcode/dancedance/blob/master/resources/docs/RPI-CM-DATASHEET-V1_0.pdf)
 > * [Logic Level Shifter TXB0108PWR](https://github.com/cardboardcode/dancedance/blob/master/resources/docs/TXB0108PWR_LEVEL_SHIFTER.pdf)
+> * [Accelerometer ADXL335](https://github.com/cardboardcode/dancedance/blob/master/resources/docs/ACCELEROMETER_ADXL335_DATASHEET.pdf)
