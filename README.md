@@ -1,3 +1,5 @@
+> [Go to Summary](#summary)
+
 <p align="center">
   <img src="resources/images/main.gif">
 </p>
