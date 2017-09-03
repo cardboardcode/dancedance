@@ -6,14 +6,8 @@
  [Requirements][req]     [Dance Moves][dance]   [About Us][about]   [Development][dev]   [Data Sheets][data]
 
 <div>
-<p>
-  <img src="resources/images/icons/req.png">
-</p>
-
-<p>
-  <img src="resources/images/icons/dance.png">
-</p>
-
+<img src="resources/images/icons/req.png" height="100p" width="100p">
+<img src="resources/images/icons/dance.png">
 </div>
 
 <p align="center">
