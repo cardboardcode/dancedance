@@ -1,14 +1,10 @@
+## Summary
 
-![](resources/images/icons/req.png) ![](resources/images/icons/dance.png)
-![](resources/images/icons/about.png) ![](resources/images/icons/development.png)
-![](resources/images/icons/data.png)
-
- [Requirements][req]     [Dance Moves][dance]   [About Us][about]   [Development][dev]   [Data Sheets][data]
-
-<div>
-<img src="resources/images/icons/req.png" height="100p" width="100p">
-<img src="resources/images/icons/dance.png">
-</div>
+* [Requirements][req]
+* [Dance Moves][dance]
+* [About Us][about]
+* [Development][dev]
+* [Data Sheets][data]
 
 <p align="center">
   <img src="resources/images/main.gif">
@@ -19,7 +15,6 @@
 ## <p align="center"> Progress </p>
 
 ![](resources/images/progress/PROGRESS_BAR2.png)
-
 
 
 #### Objective: 
