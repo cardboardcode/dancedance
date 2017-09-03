@@ -16,27 +16,27 @@
 
 
 # Front-Back
-![](images/highgif/frontback.gif) 
+![](images/highgif/frontback.gif) [Return to Top](#content)
 # Handwave
-![](images/highgif/handwave.gif) 
+![](images/highgif/handwave.gif) [Return to Top](#content)
 # Jumping
-![](images/highgif/jumping.gif) 
+![](images/highgif/jumping.gif) [Return to Top](#content) 
 # Side Step
-![](images/highgif/sidestep.gif)
+![](images/highgif/sidestep.gif) [Return to Top](#content)
 
 # Jumping Jack
-![](images/highgif/jumpingjack.gif) 
+![](images/highgif/jumpingjack.gif) [Return to Top](#content)
 # Squat-Turn-Clap
-![](images/highgif/squatturnclap.gif) 
+![](images/highgif/squatturnclap.gif) [Return to Top](#content) 
 # Steering
-![](images/highgif/steering.gif)
+![](images/highgif/steering.gif) [Return to Top](#content)
 
 # Turn-Clap
-![](images/highgif/turnclap.gif) 
+![](images/highgif/turnclap.gif) [Return to Top](#content) 
 # Window
-![](images/highgif/window.gif) 
+![](images/highgif/window.gif) [Return to Top](#content)
 # Windows360
-![](images/highgif/windows360.gif)
+![](images/highgif/windows360.gif) [Return to Top](#content)
 
 [return]: https://github.com/cardboardcode/dancedance
 [supersize]: https://github.com/cardboardcode/dancedance/blob/master/resources/superdancemoves.md
