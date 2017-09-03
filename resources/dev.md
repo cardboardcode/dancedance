@@ -8,7 +8,7 @@
 > * [Overall System Architecture](#overall-system-architecture)
 > * [Circuit Diagram](#circuit-diagram)
 > * [Use Case Diagram](#use-case-diagram)
-> * [Visualisation](#visualisation)
+> * [Visualisation](#vizualisation)
 
 # Overall System Architecture
 ![](images/sys_architecture.png) 
