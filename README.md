@@ -16,6 +16,7 @@
 * [Dance Moves][dance]
 * [About Us][about]
 * [Development][dev]
+* [Data Sheets][data]
 
 
 #### Objective: 
@@ -48,5 +49,5 @@ Reading Week |  |
 [dance]:https://github.com/cardboardcode/dancedance/blob/master/resources/dancemoves.md
 
 [about]:https://github.com/cardboardcode/dancedance/blob/master/resources/about.md
-
+[data]: https://github.com/cardboardcode/dancedance/blob/master/resources/data.md
 [dev]:https://github.com/cardboardcode/dancedance/blob/master/resources/dev.md
