@@ -5,6 +5,17 @@
 
  [Requirements][req]     [Dance Moves][dance]   [About Us][about]   [Development][dev]   [Data Sheets][data]
 
+<div>
+<p>
+  <img src="resources/images/icons/req.png">
+</p>
+
+<p>
+  <img src="resources/images/icons/dance.png">
+</p>
+
+</div>
+
 <p align="center">
   <img src="resources/images/main.gif">
 </p>
