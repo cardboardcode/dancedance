@@ -1,4 +1,9 @@
-> [Go to Summary](#summary)
+
+![](resources/images/icons/req.png) ![](resources/images/icons/dance.png)
+![](resources/images/icons/about.png) ![](resources/images/icons/development.png)
+![](resources/images/icons/data.png)
+
+ [Requirements][req]     [Dance Moves][dance]   [About Us][about]   [Development][dev]   [Data Sheets][data]
 
 <p align="center">
   <img src="resources/images/main.gif">
@@ -10,13 +15,6 @@
 
 ![](resources/images/progress/PROGRESS_BAR2.png)
 
-## Summary
-
-* [Requirements][req]
-* [Dance Moves][dance]
-* [About Us][about]
-* [Development][dev]
-* [Data Sheets][data]
 
 
 #### Objective: 
