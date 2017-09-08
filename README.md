@@ -1,4 +1,10 @@
-> [Go to Summary](#summary)
+## Summary
+
+* [Requirements][req]
+* [Dance Moves][dance]
+* [About Us][about]
+* [Development][dev]
+* [Data Sheets][data]
 
 <p align="center">
   <img src="resources/images/main.gif">
@@ -9,14 +15,6 @@
 ## <p align="center"> Progress </p>
 
 ![](resources/images/progress/PROGRESS_BAR2.png)
-
-## Summary
-
-* [Requirements][req]
-* [Dance Moves][dance]
-* [About Us][about]
-* [Development][dev]
-* [Data Sheets][data]
 
 
 #### Objective: 
