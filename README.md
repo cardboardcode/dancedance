@@ -14,7 +14,7 @@
 
 ## <p align="center"> Progress </p>
 
-![](resources/images/progress/PROGRESS_BAR2.png)
+![](resources/images/progress/PROGRESS_BAR4.png)
 
 
 #### Objective: 
@@ -29,10 +29,10 @@ Week No. | Happening | Remarks
 ~1st Week~ | ~Lecture: Project Overview~ | Done
 ~2nd Week~ | ~Lecture: Introduction To Hardware Platform~ | Gone
 ~3rd Week~ | ~Lecture: Communication and Firmware~ | Poof
-4th Week | Design Report & Lecture: System Architecture & Machine Learning Basics |
-5th Week | Feedback on Design |
-6th Week | Progress Checkpoint |
-Recess Week | Rest? |
+~4th Week~ | ~Design Report & Lecture: System Architecture & Machine Learning Basics~ | Boom!
+~5th Week~ | ~Feedback on Design~ | Bam!
+6th Week | Progress Checkpoint [SOFTWARE & COMMS Team] |
+Recess Week | What is Recess Week? Elaborating on Individual Design |
 7th Week | Individual Components(hw,comms,sw) |
 8th Week |  |
 9th Week |  |
