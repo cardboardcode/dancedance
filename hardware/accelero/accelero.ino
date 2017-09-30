@@ -35,7 +35,7 @@ int xdef;
 int ydef;
 int zdef;
 
-int xprev;
+int yprev;
 int diff;
 int counter = 0;
 
@@ -56,12 +56,12 @@ void setup() {
 
 void loop() {
 
-  xdef = analogRead(xpin);
+  ydef = analogRead(ypin);
   
   
   
   // print the sensor values:
-  diff = xdef - xprev;
+  diff = ydef - yprev;
   if (diff >= 5 || diff <= -5){
     
     if (diff < 0){
@@ -82,7 +82,7 @@ void loop() {
 //  Serial.print(analogRead(zpin));
   Serial.println();
 
-  xprev = xdef;
+  yprev = ydef;
   
   // delay before next reading:
   delay(500);
