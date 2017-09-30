@@ -31,6 +31,14 @@ const int xpin = A3;                  // x-axis of the accelerometer
 const int ypin = A2;                  // y-axis
 const int zpin = A1;                  // z-axis (only on 3-axis models)
 
+int xdef;
+int ydef;
+int zdef;
+
+int xprev;
+int diff;
+int counter = 0;
+
 void setup() {
   // initialize the serial communications:
   Serial.begin(9600);
@@ -43,18 +51,39 @@ void setup() {
   pinMode(powerpin, OUTPUT);
   digitalWrite(groundpin, LOW);
   digitalWrite(powerpin, HIGH);
+
 }
 
 void loop() {
+
+  xdef = analogRead(xpin);
+  
+  
+  
   // print the sensor values:
-  Serial.print(analogRead(xpin));
+  diff = xdef - xprev;
+  if (diff >= 5 || diff <= -5){
+    
+    if (diff < 0){
+        Serial.println("Moving in Negative");
+      }
+    else if (diff > 0){
+        Serial.println("Moving in Positive");
+      }
+    
+    Serial.print(diff);
+  }
+  delay(200);
   // print a tab between values:
-  Serial.print("\t");
-  Serial.print(analogRead(ypin));
-  // print a tab between values:
-  Serial.print("\t");
-  Serial.print(analogRead(zpin));
+//  Serial.print("\t");
+//  Serial.print(analogRead(ypin));
+//  // print a tab between values:
+//  Serial.print("\t");
+//  Serial.print(analogRead(zpin));
   Serial.println();
+
+  xprev = xdef;
+  
   // delay before next reading:
-  delay(100);
+  delay(500);
 }
