@@ -1,0 +1,28 @@
+import serial
+import struct
+
+#frame = [id, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, checkSum]
+def readlineCR(port):
+	rv=""
+	while True:
+		ch=port.read()
+		if ch!='\r':
+			rv += ch
+		else:
+			return rv, True
+
+port=serial.Serial("/dev/serial0", baudrate=115200, timeout=3.0)
+port.reset_input_buffer()
+port.reset_output_buffer()
+
+while(True):
+	rcv, done=readlineCR(port)
+	if done:
+		[id, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, checkSum] = [(data >> 8) - 48 for data in struct.unpack("!14H", rcv)]
+		frame = [id, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, checkSum]
+		str = ','.join(str(data) for data in frame)
+		print str
+		if checkSum == id^x1^y1^z1^x2^y2^z2^x3^y3^z3^x4^y4^z4:
+			port.write('A'+str(id))
+		else:
+			port.wirte('N'+str(id))
