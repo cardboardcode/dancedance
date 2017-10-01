@@ -35,9 +35,17 @@ int xdef;
 int ydef;
 int zdef;
 
-int yprev;
+int gbench = 0;
+
+int xworld = 0;
+
+int xprev;
 int diff;
+int diff2;
+
 int counter = 0;
+
+int idlevalue;
 
 void setup() {
   // initialize the serial communications:
@@ -52,38 +60,52 @@ void setup() {
   digitalWrite(groundpin, LOW);
   digitalWrite(powerpin, HIGH);
 
+  analogRead(ypin);
+
+  gbench = analogRead(ypin);
+  
 }
 
 void loop() {
+  
+  xdef = analogRead(ypin);
 
-  ydef = analogRead(ypin);
+  xdef -= gbench;
   
+  diff = xdef - xprev;
   
-  
-  // print the sensor values:
-  diff = ydef - yprev;
   if (diff >= 5 || diff <= -5){
     
-    if (diff < 0){
+    xworld += diff;
+  }
+  else{
+
+    if (idlevalue != xworld ){
+        diff2 = idlevalue - xworld;
+
+
+    if (diff2 < 0){
         Serial.println("Moving in Negative");
       }
-    else if (diff > 0){
+    else if (diff2 > 0){
         Serial.println("Moving in Positive");
       }
+      
+      }
     
-    Serial.print(diff);
-  }
-  delay(200);
+    idlevalue = xworld;
+    }
   // print a tab between values:
 //  Serial.print("\t");
 //  Serial.print(analogRead(ypin));
 //  // print a tab between values:
 //  Serial.print("\t");
 //  Serial.print(analogRead(zpin));
-  Serial.println();
+  xprev = xdef;
 
-  yprev = ydef;
+//  Serial.print("y in world coordinate = ");
+  Serial.println();
   
   // delay before next reading:
-  delay(500);
+  delay(50);
 }
