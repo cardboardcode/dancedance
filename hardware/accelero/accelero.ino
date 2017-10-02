@@ -25,87 +25,160 @@
 */
 
 // these constants describe the pins. They won't change:
-const int groundpin = 18;             // analog input pin 4 -- ground
-const int powerpin = 19;              // analog input pin 5 -- voltage
-const int xpin = A3;                  // x-axis of the accelerometer
-const int ypin = A2;                  // y-axis
-const int zpin = A1;                  // z-axis (only on 3-axis models)
+const int xpin = A0;                  // x-axis of the accelerometer
+const int ypin = A1;                  // y-axis
+const int zpin = A2;                  // z-axis (only on 3-axis models)
 
-int xdef;
-int ydef;
-int zdef;
+struct accelero{
 
-int gbench = 0;
+  int x;
+  int y;
+  int z;
+  
+  };
 
-int xworld = 0;
+double value_window[10];
+double average_window[10];
+struct accelero a1;
+float average;
+float superaverage;
+float idle_current = 0.0;
+float idle_prev = 0.0;
 
-int xprev;
-int diff;
-int diff2;
+void initAccel(void);
+void initWindow(void);
+void updateWindow(void);
+void updateAverage(int);
+double getAverage(void);
 
-int counter = 0;
+void initAccel(){
+  
+  a1.z = zpin;
+  
+  }
 
-int idlevalue;
+
+void initWindow(){
+
+  for (int i = 0; i < 10; i++){
+
+    value_window[i] = analogRead(a1.z);
+    
+  }
+  
+}
+
+void updateWindow(){
+
+   //Push all values toward the left to make space for the new value
+   for (int i = 1; i < 10 ;i++){
+
+      value_window[i-1] = value_window[i];
+    
+   }
+
+  //Insert new value at the end of the value_window
+  
+  double diff = analogRead(a1.z) - value_window[9];
+  if (diff > 5 || diff < -5){
+  value_window[9] = analogRead(a1.z);
+  }
+  
+  delay(20);
+  
+}
 
 void setup() {
   // initialize the serial communications:
   Serial.begin(9600);
 
-  // Provide ground and power by using the analog inputs as normal digital pins.
-  // This makes it possible to directly connect the breakout board to the
-  // Arduino. If you use the normal 5V and GND pins on the Arduino,
-  // you can remove these lines.
-  pinMode(groundpin, OUTPUT);
-  pinMode(powerpin, OUTPUT);
-  digitalWrite(groundpin, LOW);
-  digitalWrite(powerpin, HIGH);
+  initAccel();
 
-  analogRead(ypin);
-
-  gbench = analogRead(ypin);
+  initWindow();
   
 }
 
+double getAverage(){
+
+  double local;
+  
+  for (int i = 0; i < 10; i++){
+    local += value_window[i];    
+  }
+
+  local = local/10;
+
+  return local;
+}
+
+
+double getSuperAverage(){
+
+  double local;
+  
+  for (int i = 0; i < 10; i++){
+    local += average_window[i];    
+  }
+
+  local = local/10;
+
+  return local;
+}
+
+void printWindow(){
+  
+  for (int i = 0; i < 10; i++){
+
+    Serial.print(value_window[i]);
+    Serial.print(", ");
+    
+    }
+     
+}
+
+void updateAverage(int newinput){
+
+   //Push all values toward the left to make space for the new value
+   for (int i = 1; i < 10 ;i++){
+
+      average_window[i-1] = average_window[i];
+    
+   }  
+   average_window[9] = newinput;
+ 
+}
+
+boolean isIdle(){
+
+    int compare = average_window[0];
+    
+    for (int i = 1; i < 10; i++){
+      if (average_window[i] != compare){
+          return false;
+        }
+      }
+    return true;
+}
 void loop() {
   
-  xdef = analogRead(ypin);
+  updateWindow();
+  average = getAverage();
 
-  xdef -= gbench;
+  updateAverage(average);
+  superaverage = getSuperAverage();
   
-  diff = xdef - xprev;
-  
-  if (diff >= 5 || diff <= -5){
-    
-    xworld += diff;
-  }
-  else{
-
-    if (idlevalue != xworld ){
-        diff2 = idlevalue - xworld;
-
-
-    if (diff2 < 0){
-        Serial.println("Moving in Negative");
-      }
-    else if (diff2 > 0){
-        Serial.println("Moving in Positive");
-      }
-      
-      }
-    
-    idlevalue = xworld;
+  if(isIdle){
+    idle_current = superaverage;
     }
-  // print a tab between values:
-//  Serial.print("\t");
-//  Serial.print(analogRead(ypin));
-//  // print a tab between values:
-//  Serial.print("\t");
-//  Serial.print(analogRead(zpin));
-  xprev = xdef;
-
-//  Serial.print("y in world coordinate = ");
-  Serial.println();
   
-  // delay before next reading:
+  if (idle_current - idle_prev > 2)
+      Serial.println("FRONT ------------------------->");
+  else if (idle_current - idle_prev < -2)
+      Serial.println("BACK-------------------------<");
+  else 
+      Serial.println("NOT MOVING");
+  
+  idle_prev = idle_current;
+  
   delay(50);
 }

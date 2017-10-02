@@ -28,7 +28,7 @@
  */
 
 // Constants
-const int SENSOR_PIN = A0;  // Input pin for measuring Vout
+const int SENSOR_PIN = A12;  // Input pin for measuring Vout
 const int RS = 10;          // Shunt resistor value (in ohms)
 const int VOLTAGE_REF = 5;  // Reference voltage for analog read
 
