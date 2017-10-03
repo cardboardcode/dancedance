@@ -1,8 +1,8 @@
 
 // these constants describe the pins. They won't change:
-const int xpin = A0;                  // x-axis of the accelerometer
-const int ypin = A1;                  // y-axis
-const int zpin = A2;                  // z-axis (only on 3-axis models)
+const int xpin = A6;                  // x-axis of the accelerometer
+const int ypin = A7;                  // y-axis
+const int zpin = A8;                  // z-axis (only on 3-axis models)
 
 struct accelero{
 
@@ -215,7 +215,7 @@ void loop() {
   
   if (idle_current_x - idle_prev_x > 2)
       Serial.println("RIGHT ------------------------->");
-  else if (idle_current_x - idle_prev_x <M -2)
+  else if (idle_current_x - idle_prev_x < -2)
       Serial.println("LEFT-------------------------<");
 
   if (idle_current_y - idle_prev_y > 2)

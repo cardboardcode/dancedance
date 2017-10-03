@@ -108,17 +108,20 @@ void updateAccel(){
   
    //update x_value array
   for (int i = 0; i < 4; i++){
-    x_value[i] = analogRead(accel[i].xpin);  
+    x_value[i] = analogRead(accel[i].xpin);
+    delay(5);  
   }
 
   //update y_value array
   for (int i = 0; i < 4; i++){
     y_value[i] = analogRead(accel[i].ypin);  
+    delay(5);
   }
 
   //update z_value array
   for (int i = 0; i < 4; i++){
     z_value[i] = analogRead(accel[i].zpin);  
+    delay(5);
   }
   
   }
@@ -205,14 +208,14 @@ void printBatch(){
   //Print y-values of accelerometer as third row
   for (int i = 0; i < 4; i++){
     Serial.print("y = ");
-    Serial.print(y_value[i] - y_gbench[i]);
+    Serial.print(y_value[i]);
     Serial.print("; |");
   }
 Serial.println();
   //Print z-values of accelerometer as fourth row
   for (int i = 0; i < 4; i++){
     Serial.print("z = ");
-    Serial.print(z_value[i] - z_gbench[i]);
+    Serial.print(z_value[i]);
     Serial.print("; |");
   }
   Serial.println();
@@ -223,6 +226,29 @@ Serial.println();
   Serial.print("Voltage = ");
   Serial.println(voltage);
   
+  }
+
+void generateData(){
+
+    for (int i = 0; i < 4; i++){
+//    Serial.print("x");
+//    Serial.print(i + 1);
+//    Serial.print(" = ");
+    Serial.print(x_value[i]);
+    Serial.print(" ");
+//    Serial.print("y");
+//    Serial.print(i + 1);
+//    Serial.print(" = ");
+    Serial.print(y_value[i]);
+    Serial.print(" ");
+//    Serial.print("z");
+//    Serial.print(i + 1);
+//    Serial.print(" = ");
+    Serial.print(z_value[i]);
+    Serial.print(" ");
+    
+  }
+    
   }
 
 void setup() {
@@ -241,8 +267,11 @@ void loop() {
   
   updateBatch();
 
-  printBatch();
+//  printBatch();
+  
+  generateData();
   
   Serial.println();
-  delay(1000);
+  
+  delay(100);
 }
