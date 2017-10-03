@@ -29,17 +29,19 @@ def segment_signal(data, window_size):
 def main():    
     
     le = preprocessing.LabelEncoder()
-    le.fit(['walking', 'sitting', 'jumping'])
+    le.fit(['a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9', 'a10', 'a11', 'a12', 'a13', 'a14', 'a15', 'a16', 'a17', 'a18', 'a19'])
     list(le.classes_)
-    le.transform(['walking', 'sitting', 'jumping'])
+    le.transform(['a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9', 'a10', 'a11', 'a12', 'a13', 'a14', 'a15', 'a16', 'a17', 'a18', 'a19'])
 
-    df = pd.read_csv('acceldata.csv', header=None)
+
+    df = pd.read_csv('acceldata1.csv', header=None)
     array = df.values
-    x_data = array[:,0:3]
+    x_data = array[:,0:45]
     normalized_X = preprocessing.normalize(x_data)
-    y_data = array[:,3:4]
+    y_data = array[:,45:46]
     x = segment_signal(normalized_X, 125)
     y = segment_signal(y_data, 125)
+    
     
     num_layers = x.shape[0]
     num_rows = x.shape[1]
@@ -53,13 +55,13 @@ def main():
             temp_layer = slice_layer[:,j]
             std = np.std(temp_layer)
             row = np.append(row, [std])
-            #mean = np.mean(temp_layer)
-            #row = np.append(row, [mean])
-            #median = np.median(temp_layer)
-            #row = np.append(row, [median])
+            mean = np.mean(temp_layer)
+            row = np.append(row, [mean])
+            median = np.median(temp_layer)
+            row = np.append(row, [median])
         features = np.append(features, row)
         
-    features = features.reshape((num_layers,num_columns))
+    features = features.reshape((num_layers,num_columns*3))
     
     y_array =[]
     for i in range(num_layers):
@@ -72,15 +74,25 @@ def main():
     
     fold_index = 0
     
-    for train, test in kfold.split(features):
-        svm_model_linear = SVC(kernel = 'linear', C = 1).fit(features[train], y_array[train])
-        svm_predictions = svm_model_linear.predict(features[test])
-        accuracy = svm_model_linear.score(features[test], y_array[test])
-        cm = confusion_matrix(y_array[test],svm_predictions)
-        
-        print('In the %i fold, the classification accuracy is %f' %(fold_index, accuracy))
-        print('And the confusion matrix is: ')
-        print(cm)
-        fold_index +=1
+    #file = open("metrics.txt", "w")
+    with open('metrics.txt', 'w') as outfile:
+        for train, test in kfold.split(features):
+            svm_model_linear = SVC(kernel = 'linear', C = 1).fit(features[train], y_array[train])
+            svm_predictions = svm_model_linear.predict(features[test])
+            accuracy = svm_model_linear.score(features[test], y_array[test])
+            cm = confusion_matrix(y_array[test],svm_predictions)
+            
+            with open('metrics.txt', 'a') as outfile:
+                outfile.write("In the %i fold, the classification accuracy is %f\n" %(fold_index, accuracy))
+                print('In the %i fold, the classification accuracy is %f' %(fold_index, accuracy))
+                outfile.write("And the confusion matrix is: \n")
+                print('And the confusion matrix is: ')
+                outfile.close()
+            with open('metrics.txt', 'ab') as outfile:
+                np.savetxt(outfile, cm, fmt='%d')
+                print(cm)
+                outfile.close()
+            fold_index +=1
+    outfile.close()
  
 main()
