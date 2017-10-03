@@ -27,6 +27,10 @@ double x_value[4];
 double y_value[4];
 double z_value[4];
 
+double x_gbench[4];
+double y_gbench[4];
+double z_gbench[4];
+
 /*
  * Array Positions Indicators --------------------------------------------------------------------
  * 0 = arm_left
@@ -41,11 +45,11 @@ const int current_measure_pin = A12;
 const int RS = 10;
 const int VOLTAGE_REF = 5;
 
-float sensorValue;
-float current;
+float sensorValue ;
+float current = 0.0;
 
 //Voltage Sensor-------------------------------------------
-#define NUM_SAMPLES 10;
+#define NUM_SAMPLES 10
 
 int sum = 0;                    // sum of samples taken
 unsigned char sample_count = 0; // current sample number
@@ -58,6 +62,27 @@ void updateVoltage(void);
 void initializeAccel(void);
 void updateBatch(void);
 void printBatch(void);
+
+void initializeGB(){
+
+    
+   //update x_value array
+  for (int i = 0; i < 4; i++){
+    x_gbench[i] = analogRead(accel[i].xpin);  
+  }
+
+  //update y_value array
+  for (int i = 0; i < 4; i++){
+    y_gbench[i] = analogRead(accel[i].ypin);  
+  }
+
+  //update z_value array
+  for (int i = 0; i < 4; i++){
+    z_gbench[i] = analogRead(accel[i].zpin);  
+  }
+  
+  
+  }
 
 void initializeAccel(){
 
@@ -83,17 +108,20 @@ void updateAccel(){
   
    //update x_value array
   for (int i = 0; i < 4; i++){
-    x_value[i] = analogRead(accel[i].xpin);  
+    x_value[i] = analogRead(accel[i].xpin);
+    delay(5);  
   }
 
   //update y_value array
   for (int i = 0; i < 4; i++){
     y_value[i] = analogRead(accel[i].ypin);  
+    delay(5);
   }
 
   //update z_value array
   for (int i = 0; i < 4; i++){
     z_value[i] = analogRead(accel[i].zpin);  
+    delay(5);
   }
   
   }
@@ -130,7 +158,7 @@ void updateVoltage(){
     // divides by 11. 11.132 is the calibrated voltage divide
     // value
 
-    voltage = voltage * 11.132
+    voltage = voltage * 11.132;
     
     sample_count = 0;
     sum = 0;
@@ -161,7 +189,7 @@ void updateBatch(){
  */
 void printBatch(){
   
-  Serial.println("Accel *****")
+  Serial.println("Accel *****");
 
   //Print header label as first row
   Serial.print("arm_left    |");
@@ -174,23 +202,23 @@ void printBatch(){
   for (int i = 0; i < 4; i++){
     Serial.print("x = ");
     Serial.print(x_value[i]);
-    Serial.print("; |")
+    Serial.print("; |");
   }
-
+  Serial.println();
   //Print y-values of accelerometer as third row
   for (int i = 0; i < 4; i++){
     Serial.print("y = ");
     Serial.print(y_value[i]);
-    Serial.print("; |")
+    Serial.print("; |");
   }
-
+Serial.println();
   //Print z-values of accelerometer as fourth row
   for (int i = 0; i < 4; i++){
     Serial.print("z = ");
     Serial.print(z_value[i]);
-    Serial.print("; |")
+    Serial.print("; |");
   }
-  
+  Serial.println();
   Serial.println();
   Serial.print("Current = ");
   Serial.println(current);
@@ -200,12 +228,38 @@ void printBatch(){
   
   }
 
+void generateData(){
+
+    for (int i = 0; i < 4; i++){
+//    Serial.print("x");
+//    Serial.print(i + 1);
+//    Serial.print(" = ");
+    Serial.print(x_value[i]);
+    Serial.print(" ");
+//    Serial.print("y");
+//    Serial.print(i + 1);
+//    Serial.print(" = ");
+    Serial.print(y_value[i]);
+    Serial.print(" ");
+//    Serial.print("z");
+//    Serial.print(i + 1);
+//    Serial.print(" = ");
+    Serial.print(z_value[i]);
+    Serial.print(" ");
+    
+  }
+    
+  }
+
 void setup() {
   // initialize the serial communications:
   Serial.begin(9600);
   
   // initialize accelerometers pins
   initializeAccel();
+
+  // initialize gravitational biase array
+  initializeGB();
   
 }
 
@@ -213,8 +267,11 @@ void loop() {
   
   updateBatch();
 
-  printBatch();
+//  printBatch();
+  
+  generateData();
   
   Serial.println();
+  
   delay(100);
 }
