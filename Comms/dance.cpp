@@ -9,6 +9,8 @@
 
 //Semaphore for barrier implementation
 SemaphoreHandle_t xSemaphoreCount = NULL;
+SemaphoreHandle_t xSemaphoreEmptyID = NULL;
+SemaphoreHandle_t xSemaphoreSendID = NULL;
 SemaphoreHandle_t xSemaphore1 = NULL;
 SemaphoreHandle_t xSemaphore2 = NULL;
 SemaphoreHandle_t xSemaphore3 = NULL;
@@ -48,38 +50,54 @@ TConfigFrame cfgFrame;
 TConfigFrame returnFrame;
 
 //Sliding window flow control
-int bufferSize = 8;
-int currentID = 0;
-int ackID = 8;
-unsigned char* frameBuffer[8];
+const int bufferSize = 8;
+int emptySlots = 8;
+int itemSlots = 0;
+int emptyID = 0;
+int sendID = 0;
+unsigned char frameBuffer[bufferSize][frameLength];
 
 void readSensor1(void *pvParameters);
 void readSensor2(void *pvParameters);
 void readSensor3(void *pvParameters);
 void readSensor4(void *pvParameters);
 void serializeMessage(void *pvParameters);
+void sendMessage(void *pvParameters);
 void receiveFeedback(void *pvParameters);
 
 void setup() {
 	Serial.begin(115200);
 	Serial3.begin(115200);
+
+	//Handshaking, wait until raspberry pi say 'H', then reply 'A' to start the transmission
+	while(!Serial3.available() || Serial3.read() != 'H') {
+		Serial.println("Wait for Pi");
+	}
+	Serial.println("Connected");
+	Serial3.write('A');
+
 	xSemaphoreCount = xSemaphoreCreateMutex();
+	xSemaphoreEmptyID = xSemaphoreCreateMutex();
+	xSemaphoreSendID = xSemaphoreCreateMutex();
 	xSemaphore1 = xSemaphoreCreateBinary();
 	xSemaphore2 = xSemaphoreCreateBinary();
 	xSemaphore3 = xSemaphoreCreateBinary();
 	xSemaphore4 = xSemaphoreCreateBinary();
 	xSemaphoreGive(xSemaphoreCount);
+	xSemaphoreGive(xSemaphoreEmptyID);
+	xSemaphoreGive(xSemaphoreSendID);
 	xSemaphoreGive(xSemaphore1);
 	xSemaphoreGive(xSemaphore2);
 	xSemaphoreGive(xSemaphore3);
 	xSemaphoreGive(xSemaphore4);
 
-	xTaskCreate(readSensor1, "readSensor1", 100, NULL, 4, NULL);
-	xTaskCreate(readSensor2, "readSensor2", 100, NULL, 4, NULL);
-	xTaskCreate(readSensor3, "readSensor3", 100, NULL, 4, NULL);
-	xTaskCreate(readSensor4, "readSensor4", 100, NULL, 4, NULL);
-	xTaskCreate(serializeMessage, "serializeMessage", 100, NULL, 3, NULL);
-	xTaskCreate(receiveFeedback, "receiveFeedback", 100, NULL, 3, NULL);
+	xTaskCreate(readSensor1, "readSensor1", 100, NULL, 3, NULL);
+	xTaskCreate(readSensor2, "readSensor2", 100, NULL, 3, NULL);
+	xTaskCreate(readSensor3, "readSensor3", 100, NULL, 3, NULL);
+	xTaskCreate(readSensor4, "readSensor4", 100, NULL, 3, NULL);
+	xTaskCreate(serializeMessage, "serializeMessage", 100, NULL, 2, NULL);
+	xTaskCreate(sendMessage, "sendMessage", 100, NULL, 1, NULL);
+	xTaskCreate(receiveFeedback, "receiveFeedback", 100, NULL, 1, NULL);
 }
 
 void loop()
@@ -165,26 +183,41 @@ void readSensor4(void *p) {
 
 void loadToBuffer() {
 	//Serialize the data into a frame (char array)
-	cfgFrame.frameID = currentID + '0';
-	cfgFrame.sensor1X = x1 + '0';
-	cfgFrame.sensor1Y = y1 + '0';
-	cfgFrame.sensor1Z = z1 + '0';
-	cfgFrame.sensor2X = x2 + '0';
-	cfgFrame.sensor2Y = y2 + '0';
-	cfgFrame.sensor2Z = z2 + '0';
-	cfgFrame.sensor3X = x3 + '0';
-	cfgFrame.sensor3Y = y3 + '0';
-	cfgFrame.sensor3Z = z3 + '0';
-	cfgFrame.sensor4X = x4 + '0';
-	cfgFrame.sensor4Y = y4 + '0';
-	cfgFrame.sensor4Z = z4 + '0';
-	cfgFrame.checkSum = (currentID ^ x1 ^ y1 ^ z1 ^ x2 ^ y2 ^ z2 ^ x3 ^ y3 ^ z3 ^ x4 ^ y4 ^ z4) + '0';
-	currentID = (currentID + 1) % bufferSize;
-	unsigned char message[frameLength];
-	memcpy(message, &cfgFrame, frameLength);
-//	frameBuffer[currentID] = message;
-	Serial3.write(message, frameLength);
-	Serial3.write('\r');
+	cfgFrame.frameID = emptyID;
+	cfgFrame.sensor1X = x1;
+	cfgFrame.sensor1Y = y1;
+	cfgFrame.sensor1Z = z1;
+	cfgFrame.sensor2X = x2;
+	cfgFrame.sensor2Y = y2;
+	cfgFrame.sensor2Z = z2;
+	cfgFrame.sensor3X = x3;
+	cfgFrame.sensor3Y = y3;
+	cfgFrame.sensor3Z = z3;
+	cfgFrame.sensor4X = x4;
+	cfgFrame.sensor4Y = y4;
+	cfgFrame.sensor4Z = z4;
+	cfgFrame.checkSum = (emptyID ^ x1 ^ y1 ^ z1 ^ x2 ^ y2 ^ z2 ^ x3 ^ y3 ^ z3 ^ x4 ^ y4 ^ z4);
+//	unsigned char message[frameLength];
+//	frameBuffer[emptyID] = message;
+//	Serial3.write(frameBuffer[emptyID], frameLength);
+//	emptyID = (emptyID + 1) % bufferSize;
+	if(xSemaphoreTake(xSemaphoreEmptyID, 5) == pdTRUE) {
+		if(emptySlots < 1) {                              //no more empty space, signal overflow
+			Serial.println("V");
+		} else {
+//			frameBuffer[emptyID] = message;
+//			Serial3.write(frameBuffer[sendID], frameLength);
+			memcpy(frameBuffer[emptyID], &cfgFrame, frameLength);
+			emptyID = (emptyID + 1) % bufferSize;
+//			sendID = (sendID + 1) % bufferSize;
+			emptySlots = emptySlots - 1;
+			if(xSemaphoreTake(xSemaphoreSendID, 5) == pdTRUE) {
+				 itemSlots = itemSlots + 1;
+				 xSemaphoreGive(xSemaphoreSendID);
+			}
+		}
+		xSemaphoreGive(xSemaphoreEmptyID);
+	}
 }
 
 void serializeMessage(void *p) {
@@ -209,12 +242,52 @@ void serializeMessage(void *p) {
 	}
 }
 
-void receiveFeedback(void *p){
+void sendMessage(void *p) {
+	int id = 0;
+	boolean send = false;
 	TickType_t pxPreviousWakeTime6 = xTaskGetTickCount();
 	while(1) {
-		if(Serial3.available()) {
-			Serial.write(Serial3.read());
+		if(xSemaphoreTake(xSemaphoreSendID, 5) == pdTRUE) {
+			if(itemSlots > 0) {                             //contains data to send
+				id = sendID;
+				send = true;
+//				Serial3.write(frameBuffer[sendID], frameLength);
+				sendID = (sendID + 1) % bufferSize;
+				itemSlots = itemSlots - 1;
+			} else {
+				send = false;
+			}
+			xSemaphoreGive(xSemaphoreSendID);
 		}
-		vTaskDelayUntil(&pxPreviousWakeTime6, 50);
+		if (send) {
+			Serial3.write(frameBuffer[id], frameLength);
+		}
+		vTaskDelayUntil(&pxPreviousWakeTime6, 100);
+	}
+}
+
+void receiveFeedback(void *p){
+	char ackByte;
+	int frameID;
+	TickType_t pxPreviousWakeTime7 = xTaskGetTickCount();
+	while(1) {
+		if(Serial3.available()==2) {
+			ackByte = Serial3.read();
+			frameID = Serial3.read();
+			Serial.write(ackByte);
+			Serial.print(frameID);
+			if(ackByte == 'A') {
+				if(xSemaphoreTake(xSemaphoreEmptyID, 5) == pdTRUE) {
+					emptySlots = (8-emptyID + frameID) % 8 + 1;      //update empty space
+					xSemaphoreGive(xSemaphoreEmptyID);
+				}
+			} else if (ackByte == 'N'){
+				if(xSemaphoreTake(xSemaphoreSendID, 5) == pdTRUE) {
+					sendID = frameID;                                //resent the frame
+					xSemaphoreGive(xSemaphoreSendID);
+				}
+			}
+		}
+		vTaskDelayUntil(&pxPreviousWakeTime7, 100);
 	}
 }
