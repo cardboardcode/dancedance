@@ -42,8 +42,8 @@ def main():
     y_num_columns = y_data.shape[1]
     y_data = le.fit_transform(y_data)
     y_data = y_data.reshape(y_num_rows, y_num_columns)
-    x = segment_signal(normalized_X, 5)
-    y = segment_signal(y_data, 5)
+    x = segment_signal(normalized_X, 3)
+    y = segment_signal(y_data, 3)
     
     x_num_layers = x.shape[0]
     x_num_rows = x.shape[1]
@@ -78,7 +78,7 @@ def main():
     fold_index = 0
     with open('metrics.txt', 'w') as outfile:
         for train, test in kfold.split(features):
-            knn = KNeighborsClassifier(n_neighbors=5).fit(features[train], y_array[train])
+            knn = KNeighborsClassifier(n_neighbors=10).fit(features[train], y_array[train])
             pred = knn.predict(features[test])
             accuracy = accuracy_score(pred, y_array[test])
             cm = confusion_matrix(y_array[test],pred)
