@@ -1,28 +1,41 @@
 import serial
 import struct
+import time
 
 #frame = [id, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, checkSum]
-def readlineCR(port):
-	rv=""
-	while True:
-		ch=port.read()
-		if ch!='\r':
-			rv += ch
-		else:
-			return rv, True
+#def readlineCR(port):
+#       rv=""
+#       while True:
+#               ch=port.read()
+#               if ch!='\r':
+#                       rv += ch
+#               else:
+#                       return rv
 
-port=serial.Serial("/dev/serial0", baudrate=115200, timeout=3.0)
+port=serial.Serial("/dev/serial0", baudrate=115200)
 port.reset_input_buffer()
 port.reset_output_buffer()
 
+
+#Handshaking, keep saying 'H' to Arduino unitl Arduion reply 'A'
+while(port.in_waiting == 0 or port.read() != 'A'):
+        print 'Try to connect to Arduino'
+        port.write('H')
+        time.sleep(1)
+print 'Connected'
+
 while(True):
-	rcv, done=readlineCR(port)
-	if done:
-		[id, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, checkSum] = [(data >> 8) - 48 for data in struct.unpack("!14H", rcv)]
-		frame = [id, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, checkSum]
-		str = ','.join(str(data) for data in frame)
-		print str
-		if checkSum == id^x1^y1^z1^x2^y2^z2^x3^y3^z3^x4^y4^z4:
-			port.write('A'+str(id))
-		else:
-			port.wirte('N'+str(id))
+        rcv = port.read(28)
+        print(len(rcv))
+        [id, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, checkSum] = [(data >> 8) for data in struct.unpack("!14H", rcv)]
+        frame = [id, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, checkSum]
+        result = ','.join(str(data) for data in frame)
+        print result
+        if checkSum == id^x1^y1^z1^x2^y2^z2^x3^y3^z3^x4^y4^z4:
+                print 'A'
+                port.write('A')
+                port.write(chr(id))
+        else:
+                print 'N'
+                port.write('N')
+                port.write(chr(id))
