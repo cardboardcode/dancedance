@@ -189,42 +189,42 @@ void updateBatch(){
  */
 void printBatch(){
   
-  Serial.println("Accel *****");
-
-  //Print header label as first row
-  Serial.print("arm_left    |");
-  Serial.print("arm_right   |");
-  Serial.print("leg_left    |");
-  Serial.print("leg_right   |");
-  Serial.println();
-  
-  //Print x-values of accelerometer as second row
-  for (int i = 0; i < 4; i++){
-    Serial.print("x = ");
-    Serial.print(x_value[i]);
-    Serial.print("; |");
-  }
-  Serial.println();
-  //Print y-values of accelerometer as third row
-  for (int i = 0; i < 4; i++){
-    Serial.print("y = ");
-    Serial.print(y_value[i]);
-    Serial.print("; |");
-  }
-Serial.println();
-  //Print z-values of accelerometer as fourth row
-  for (int i = 0; i < 4; i++){
-    Serial.print("z = ");
-    Serial.print(z_value[i]);
-    Serial.print("; |");
-  }
-  Serial.println();
-  Serial.println();
+//  Serial.println("Accel *****");
+//
+//  //Print header label as first row
+//  Serial.print("arm_left    |");
+//  Serial.print("arm_right   |");
+//  Serial.print("leg_left    |");
+//  Serial.print("leg_right   |");
+//  Serial.println();
+//  
+//  //Print x-values of accelerometer as second row
+//  for (int i = 0; i < 4; i++){
+//    Serial.print("x = ");
+//    Serial.print(x_value[i]);
+//    Serial.print("; |");
+//  }
+//  Serial.println();
+//  //Print y-values of accelerometer as third row
+//  for (int i = 0; i < 4; i++){
+//    Serial.print("y = ");
+//    Serial.print(y_value[i]);
+//    Serial.print("; |");
+//  }
+//Serial.println();
+//  //Print z-values of accelerometer as fourth row
+//  for (int i = 0; i < 4; i++){
+//    Serial.print("z = ");
+//    Serial.print(z_value[i]);
+//    Serial.print("; |");
+//  }
+//  Serial.println();
+//  Serial.println();
   Serial.print("Current = ");
-  Serial.println(current);
-
-  Serial.print("Voltage = ");
-  Serial.println(voltage);
+  Serial.println(current,3);
+//
+//  Serial.print("Voltage = ");
+//  Serial.println(voltage);
   
   }
 
@@ -267,9 +267,9 @@ void loop() {
   
   updateBatch();
 
-//  printBatch();
+  printBatch();
   
-  generateData();
+//  generateData();
   
   Serial.println();
   
