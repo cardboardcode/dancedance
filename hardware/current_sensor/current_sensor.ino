@@ -58,7 +58,7 @@ void loop() {
 
   // Output value (in amps) to the serial monitor to 3 decimal
   // places
-  Serial.print(current, 3);
+  Serial.print(current, 5);
   Serial.println(" A");
 
   // Delay program for a few milliseconds
