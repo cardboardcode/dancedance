@@ -1,0 +1,51 @@
+import serial
+import struct
+import time
+#frame = [id, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, checkSum]
+#def readlineCR(port):
+#       rv=""
+#       while True:
+#               ch=port.read()
+#               if ch!='\r':
+#                       rv += ch
+#               else:
+#                       return rv
+
+port=serial.Serial("/dev/serial0", baudrate=115200)
+port.reset_input_buffer()
+port.reset_output_buffer()
+
+
+#Handshaking, keep saying 'H' to Arduino unitl Arduion reply 'A'
+while(port.in_waiting == 0 or port.read() != 'A'):
+        print 'Try to connect to Arduino'
+        port.write('H')
+        time.sleep(1)
+print 'Connected'
+
+list = [[]]
+nextID = 0
+bufferSize = 8
+while(True):
+        try:
+                rcv = port.read(28)
+                [id, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, checkSum] = [(d$
+                frame = [id, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, checkSu$
+                result = ','.join(str(data) for data in frame)
+                print result
+                #keep droping the frame until found the matched frame
+                if nextID == id:
+                        if checkSum == id^x1^y1^z1^x2^y2^z2^x3^y3^z3^x4^y4^z4:
+                                list.append(frame[1: -1])   #store the 12 reading
+                                port.write('A')
+                                port.write(chr(id))  #send ACK+frameID
+                                nextID = (nextID + 1) % bufferSize   #set nextID
+                        else:
+                                port.write('N')
+                                port.write(chr(id))
+        except KeyboardInterrupt:
+                print 'data storage: '
+                for frame in list:
+                        result = ','.join(str(data) for data in frame)
+                        print result
+                exit()

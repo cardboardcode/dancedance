@@ -1,20 +1,19 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Sep 19 22:16:05 2017
+Created on Thu Sep 21 02:38:43 2017
 
 @author: garygjy
 """
 
 import numpy as np
 import pandas as pd
-import matplotlib as mpl
-import tensorflow as tf
 
-from sklearn.svm import SVC
-
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn import preprocessing
+from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import KFold
 from sklearn.metrics import confusion_matrix
+from sklearn.metrics import accuracy_score
 
 def segment_signal(data, window_size):
     N = data.shape[0]
@@ -29,29 +28,32 @@ def segment_signal(data, window_size):
 def main():    
     
     le = preprocessing.LabelEncoder()
-    le.fit(['a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9', 'a10', 'a11', 'a12', 'a13', 'a14', 'a15', 'a16', 'a17', 'a18', 'a19'])
+    le.fit(['busdriver','handwave','windowcleaner','sidestep','jumpingjack','jumping','frontback'])
     list(le.classes_)
-    le.transform(['a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9', 'a10', 'a11', 'a12', 'a13', 'a14', 'a15', 'a16', 'a17', 'a18', 'a19'])
+    le.transform(['busdriver','handwave','windowcleaner','sidestep','jumpingjack','jumping','frontback'])
 
-
-    df = pd.read_csv('acceldata1.csv', header=None)
+    df = pd.read_csv('testdata.csv', header=None)
     array = df.values
-    x_data = array[:,0:45]
+    x_data = array[:,0:12]
     normalized_X = preprocessing.normalize(x_data)
-    y_data = array[:,45:46]
-    x = segment_signal(normalized_X, 125)
-    y = segment_signal(y_data, 125)
     
+    y_data = array[:,12:13]
+    y_num_rows = y_data.shape[0]
+    y_num_columns = y_data.shape[1]
+    y_data = le.fit_transform(y_data)
+    y_data = y_data.reshape(y_num_rows, y_num_columns)
+    x = segment_signal(normalized_X, 3)
+    y = segment_signal(y_data, 3)
     
-    num_layers = x.shape[0]
-    num_rows = x.shape[1]
-    num_columns = x.shape[2]
+    x_num_layers = x.shape[0]
+    x_num_rows = x.shape[1]
+    x_num_columns = x.shape[2]
     features = []
 
-    for i in range(num_layers):
+    for i in range(x_num_layers):
         slice_layer = x[i,::]
         row = []
-        for j in range(num_columns):
+        for j in range(x_num_columns):
             temp_layer = slice_layer[:,j]
             std = np.std(temp_layer)
             row = np.append(row, [std])
@@ -61,27 +63,26 @@ def main():
             row = np.append(row, [median])
         features = np.append(features, row)
         
-    features = features.reshape((num_layers,num_columns*3))
+    features = features.reshape((x_num_layers,x_num_columns*3))
     
     y_array =[]
-    for i in range(num_layers):
+    for i in range(x_num_layers):
         slice_layer = y[i,::]
         row = []
-        mean = np.mean(slice_layer)
-        y_array = np.append(y_array, [mean])
+        median = np.median(slice_layer)
+        y_array = np.append(y_array, [median])
         
-    kfold = KFold(n_splits=10, shuffle=True, random_state=7)
+    
+    kfold = KFold(n_splits=10, shuffle=True, random_state=8)
     
     fold_index = 0
-    
-    #file = open("metrics.txt", "w")
     with open('metrics.txt', 'w') as outfile:
         for train, test in kfold.split(features):
-            svm_model_linear = SVC(kernel = 'linear', C = 1).fit(features[train], y_array[train])
-            svm_predictions = svm_model_linear.predict(features[test])
-            accuracy = svm_model_linear.score(features[test], y_array[test])
-            cm = confusion_matrix(y_array[test],svm_predictions)
-            
+            knn = KNeighborsClassifier(n_neighbors=10).fit(features[train], y_array[train])
+            pred = knn.predict(features[test])
+            accuracy = accuracy_score(pred, y_array[test])
+            cm = confusion_matrix(y_array[test],pred)
+           
             with open('metrics.txt', 'a') as outfile:
                 outfile.write("In the %i fold, the classification accuracy is %f\n" %(fold_index, accuracy))
                 print('In the %i fold, the classification accuracy is %f' %(fold_index, accuracy))
@@ -94,5 +95,4 @@ def main():
                 outfile.close()
             fold_index +=1
     outfile.close()
- 
 main()

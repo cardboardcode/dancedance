@@ -28,8 +28,8 @@
  */
 
 // Constants
-const int SENSOR_PIN = A0;  // Input pin for measuring Vout
-const int RS = 10;          // Shunt resistor value (in ohms)
+const int SENSOR_PIN = A13;  // Input pin for measuring Vout
+const float RS = 0.1;          // Shunt resistor value (in ohms)
 const int VOLTAGE_REF = 5;  // Reference voltage for analog read
 
 // Global Variables
@@ -58,7 +58,7 @@ void loop() {
 
   // Output value (in amps) to the serial monitor to 3 decimal
   // places
-  Serial.print(current, 3);
+  Serial.print(current, 5);
   Serial.println(" A");
 
   // Delay program for a few milliseconds
