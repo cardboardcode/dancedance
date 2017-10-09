@@ -39,12 +39,67 @@ ADXL335 accel1(pin_x1, pin_y1, pin_z1, aref);
 ADXL335 accel2(pin_x2, pin_y2, pin_z2, aref);
 ADXL335 accel3(pin_x3, pin_y3, pin_z3, aref);
 
+//Current Sensor
+
+// Constants
+const int SENSOR_PIN = A13;  // Input pin for measuring Vout
+const float RS = 0.1;          // Shunt resistor value (in ohms)
+const int VOLTAGE_REF = 5;  // Reference voltage for analog read
+
+// Global Variables
+float sensorValue;   // Variable to store value from analog read
+float current;       // Calculated current value
+
+//Voltage Sensor
+
+// number of analog samples to take per reading
+#define NUM_SAMPLES 10
+
+int sum = 0;                    // sum of samples taken
+unsigned char sample_count = 0; // current sample number
+float voltage = 0.0;            // calculated voltage
+
 
 void setup()
 {
   Serial.begin(9600);
   
   Serial.println("X0,\tY0,\tZ0,\tX1,\tY1,\tZ1,X2,\tY2,\tZ2,X3,\tY3,\tZ3,");
+}
+
+void updateCurrent(){
+  
+// Read a value from the INA169 board
+  sensorValue = analogRead(SENSOR_PIN);
+
+  // Remap the ADC value into a voltage number (5V reference)
+  sensorValue = (sensorValue * VOLTAGE_REF) / 1023;
+
+  // Follow the equation given by the INA169 datasheet to
+  // determine the current flowing through RS. Assume RL = 10k
+  // Is = (Vout x 1k) / (RS x RL)
+  current = sensorValue / (10 * RS);  
+  
+}
+
+void updateVoltage(){
+    // take a number of analog samples and add them up
+    while (sample_count < NUM_SAMPLES) {
+        sum += analogRead(A2);
+        sample_count++;
+        delay(10);
+    }
+    // calculate the voltage
+    // use 5.0 for a 5.0V ADC reference voltage
+    // 5.015V is the calibrated reference voltage
+    voltage = ((float)sum / (float)NUM_SAMPLES * 5.015) / 1024.0;
+    // send voltage for display on Serial Monitor
+    // voltage multiplied by 11 when using voltage divider that
+    // divides by 11. 11.132 is the calibrated voltage divide
+    // value
+    
+    sample_count = 0;
+    sum = 0;  
 }
 
 void loop()
@@ -134,6 +189,14 @@ void loop()
   Serial.print(formatFloat(z3, 2, &string_width));
   Serial.print(",\t");
   Serial.println("");
+
+  // Output value (in amps) to the serial monitor to 3 decimal
+  // places
+  Serial.print(current, 5);
+  Serial.println(" A");
+
+  Serial.print(voltage * 11.132);
+  Serial.println (" V");
   
 //  Serial.print(formatFloat(rho, 2, &string_width));
 //  Serial.print(",\t");
