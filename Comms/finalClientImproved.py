@@ -3,35 +3,20 @@ from Crypto import Random
 import hashlib
 import base64
 import socket
-import pandas as pd
+import time
+#import pandas as pd
 import os
 import csv
 
-HOST = "172.20.10.2"
+HOST = "192.168.43.81" ##o or 172.20.10.4
 PORT = 4957
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((HOST, PORT))
 bs = 32
 raw_key = "1234567890123456"
 key = hashlib.sha256(raw_key.encode()).digest()
-
-df = pd.read_csv('storageData.csv')
-x=0
-while (x<50):
-	plainText="#"
-	selectedData = df.loc[[x]] #must put in as a list [[]] to get a definite dataframe instead of series. 
-	x +=1
-
-	row = next(selectedData.iterrows())[1]
-	for y in range(7):
-		plainText += str(row[y])	
-		plainText +="|"
-
-	var1= plainText
-	finalString = encryptText(var1,key)
-	s.send(finalString)
-
-s.close()
+x = 0
+f = open('TestData.txt','r')
 
 def encryptText(plainText, key):
     raw = pad(plainText)
@@ -41,4 +26,17 @@ def encryptText(plainText, key):
 
 def pad(var1):
     return var1 + (bs - len(var1)%bs)*chr(bs - len(var1)%bs)
+# df = pd.read_csv('storageData.csv')
+
+while (x<49):	
+	plainText = f.readline()
+	var1= str(plainText)
+	var1 = var1.strip();
+	finalString = encryptText(var1,key)
+	x=x+1
+	s.send(finalString)
+	time.sleep(1)
+
+s.close()
+
 
