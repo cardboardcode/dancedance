@@ -1,51 +1,127 @@
 import serial
-import struct
+import RingBuffer as RB
+import threading
 import time
-#frame = [id, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, checkSum]
-#def readlineCR(port):
-#       rv=""
-#       while True:
-#               ch=port.read()
-#               if ch!='\r':
-#                       rv += ch
-#               else:
-#                       return rv
+import sys
+import operator
 
-port=serial.Serial("/dev/serial0", baudrate=115200)
-port.reset_input_buffer()
-port.reset_output_buffer()
+mutex = threading.Lock()
 
+class ReceiveData(threading.Thread):
+        def __init__(self, buffer, port):
+                threading.Thread.__init__(self)
+                self.buffer = buffer
+                self.port = port
 
-#Handshaking, keep saying 'H' to Arduino unitl Arduion reply 'A'
-while(port.in_waiting == 0 or port.read() != 'A'):
-        print 'Try to connect to Arduino'
-        port.write('H')
-        time.sleep(1)
-print 'Connected'
+        def run(self):
+                #Handshaking, keep saying 'H' to Arduino unitl Arduion reply 'A'
+                while(self.port.in_waiting == 0 or self.port.read() != 'A'):
+                        print 'Try to connect to Arduino'
+                        self.port.write('H')
+                        time.sleep(1)
+                self.port.write('A');
+                print 'Connected'
+                self.readData()
 
-list = [[]]
-nextID = 0
-bufferSize = 8
-while(True):
-        try:
-                rcv = port.read(28)
-                [id, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, checkSum] = [(d$
-                frame = [id, x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4, checkSu$
-                result = ','.join(str(data) for data in frame)
-                print result
-                #keep droping the frame until found the matched frame
-                if nextID == id:
-                        if checkSum == id^x1^y1^z1^x2^y2^z2^x3^y3^z3^x4^y4^z4:
-                                list.append(frame[1: -1])   #store the 12 reading
-                                port.write('A')
-                                port.write(chr(id))  #send ACK+frameID
-                                nextID = (nextID + 1) % bufferSize   #set nextID
+        def readData(self):
+                #start to receive data from mega
+                if not self.buffer.isFull():
+                        rcv = self.port.read(14)
+                        mutex.acquire()
+                        self.buffer.append(rcv)
+                        mutex.release()
+                threading.Timer(0.1, self.readData).start()
+
+class StoreData(threading.Thread):
+        def __init__(self, port, buffer, list, _aref):
+                threading.Thread.__init__(self)
+                self.port = port
+                self.buffer = buffer
+                self.bufferSize = buffer.getSize()
+                self.list = list
+                self._aref = _aref
+                self._bias = _aref/2.0
+                self._mvG = _aref/10.0
+
+        def run(self):
+                self.nextID = 0
+                self.storeData()
+
+        def storeData(self):
+                mutex.acquire()
+                dataList = self.buffer.get()
+                mutex.release()
+                if dataList:                                   #list is not empty
+#                       print(", ".join(str(d) for d in dataList))
+                        ack = False
+                        for data in dataList:
+                                if reduce(operator.xor, data) == 0:                         #pass checksum check
+                                        ack = True                                           #ack current sample
+                                        sample = [((s * 4 * self._aref / 1024.0 - self._bias) / self._mvG) for s in data[1:-1]]
+                                        self.list.append(sample)                                  #store the 12 reading
+                                        self.nextID = (data[0] + 1)%self.bufferSize
+                                else:
+                                        ack = False                                                  #some samples has problem
+                                        break
+                        if ack:
+                                print('A'+str(self.nextID))
+                                self.port.write('A')
+                                self.port.write(chr(self.nextID))
+                                mutex.acquire()
+                                self.buffer.ack(self.nextID)
+                                mutex.release()
                         else:
-                                port.write('N')
-                                port.write(chr(id))
-        except KeyboardInterrupt:
-                print 'data storage: '
-                for frame in list:
-                        result = ','.join(str(data) for data in frame)
-                        print result
-                exit()
+                                print('N'+str(self.nextID))
+                                self.port.write('N')
+                                self.port.write(chr(self.nextID))
+                                mutex.acquire()
+                                self.buffer.nack(self.nextID)
+                                mutex.release()
+                threading.Timer(0.1, self.storeData).start()
+
+class Raspberry():
+        def __init__(self):
+                self.list = [[]]
+                self.buffer = RB.RingBuffer(16)
+                self._aref = 3.3
+                self.threads = []
+
+        def main(self):
+                try:
+                        time0 = int(round(time.time()*1000))
+
+                        #set up port connection
+                        self.port=serial.Serial("/dev/serial0", baudrate=115200)
+                        self.port.reset_input_buffer()
+                        self.port.reset_output_buffer()
+
+                        #initialize all threads
+                        commThread = ReceiveData(self.buffer, self.port)
+                        storageThread = StoreData(self.port, self.buffer, self.list, self._aref)
+
+                        self.threads.append(commThread)
+                        self.threads.append(storageThread)
+
+                        #start all thread
+                        for thread in self.threads:
+                                thread.daemon = True
+                                thread.start()
+
+				#prevent program exit
+                        while True:
+                                time.sleep(1)
+
+                except KeyboardInterrupt:
+                        time1 = int(round(time.time()*1000))
+                        print("time elapsed: " + str(time1-time0))
+                        for sample in self.list:
+                                print(", ".join(str(f) for f in sample))
+                        print len(self.list)
+                        sys.exit(1)
+
+
+
+if __name__ == '__main__':
+        pi = Raspberry()
+        pi.main()
+
