@@ -10,7 +10,7 @@ class RingBuffer():
 
         def append(self, x):
                 """append an element at the end of the buffer"""
-                data = [int(d) for d in struct.unpack("!14B", x)]
+                data = [int(d) for d in struct.unpack("!16B", x)]
 #               print(", ".join(str(d) for d in data))
                 if self.nextID == data[0]:                                 #keep dropping the packet until the one we want
                         if self.ackID == (self.nextID + 1) % self.size:       #buffer full
