@@ -1,157 +1,164 @@
-import serial
-import RingBuffer as RB
-import threading
-import time
-import sys
-import operator
 import csv
+import numpy as np
+import pandas as pd
+import math
 
-mutex = threading.Lock()
-
-class ReceiveData(threading.Thread):
-	def __init__(self, buffer, port, time0, period):
-		threading.Thread.__init__(self)
-		self.buffer = buffer
-		self.port = port
-		self.period = period
-		self.time0 = time0
-
-	def run(self):
-		#Handshaking, keep saying 'H' to Arduino unitl Arduion reply 'A'
-		while(self.port.in_waiting == 0 or self.port.read() != 'A'):
-        		print 'Try to connect to Arduino'
-        		self.port.write('H')
-        		time.sleep(1)
-		self.port.write('A');
-		print 'Connected'
-		self.time0[0] = int(round(time.time()*1000))
-		self.readData()
+from scipy.stats import mode as md
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split
+from sklearn import preprocessing
+from sklearn.preprocessing import LabelEncoder
 
 
-	def readData(self):
-		#start to receive data from mega
-		nextTime = time.time() + self.period
-		if not self.buffer.isFull():
-			rcv = self.port.read(16)
-			mutex.acquire()
-			self.buffer.append(rcv)
-			mutex.release()
-		threading.Timer(nextTime - time.time(), self.readData).start()	
-
-class StoreData(threading.Thread):
-	def __init__(self, port, buffer, list, _aref, _vref, _RS, _cvref, _cdivide, headers, period):
-		threading.Thread.__init__(self)
-		self.port = port
-		self.buffer = buffer
-		self.bufferSize = buffer.getSize()
-		self.list = list
-		self._aref = _aref            #voltage reference for accelo sensor
-		self._bias = _aref/2.0
-		self._mvG = _aref/10.0
-		self._vref = _vref            #voltage reference for current sensor
-		self.RS = _RS                 #shunt resistor value (in ohms)
- 		self._cvref = _cvref          #calibrated voltage reference for voltage sensor
-		self._cdivide = _cdivide      #calibrated voltage divide for voltage sensor
-		self.headers = headers
-		self.period = period
-
-	def run(self):
-		self.nextID = 0
-		self.storeData()
-
-	def storeData(self):
-		nextTime = time.time() + self.period
-		mutex.acquire()
-		dataList = self.buffer.get()
-		mutex.release()
-		if dataList:                                   #list is not empty
-#			print(len(dataList))
-			ack = False
-			for data in dataList:
-#				print(", ".join(str(d) for d in data))
-				if reduce(operator.xor, data) == 0:                         #pass checksum check
-					ack = True                                           #ack current sample
-					sample = ['{0:.4f}'.format(s*self._cvref/1024.0*self._cdivide) for s in data[1:2]] \
-							+ ['{0:.4f}'.format(s*self._vref/1023.0/(10*self.RS)) for s in data[2:3]] \
-							+ ['{0:.4f}'.format(((s<<2) * self._aref / 1024.0 - self._bias) / self._mvG) for s in data[3:-1]]
-					print(", ".join(sample))
-					sampleDict = dict(zip(self.headers, sample))
-                			self.list.append(sampleDict)                                  #store the 12 reading
-					self.nextID = (data[0] + 1)%self.bufferSize
-               			else:
-					ack = False                                                  #some samples has problem
-					break
-			if ack:
-#				print('A'+str(self.nextID))
-				self.port.write('A')
-				self.port.write(chr(self.nextID))
-				mutex.acquire()
-				self.buffer.ack(self.nextID)
-				mutex.release()
-			else:
-#				print('N'+str(self.nextID))
-				self.port.write('N')
-				self.port.write(chr(self.nextID))
-				mutex.acquire()
-				self.buffer.nack(self.nextID)
-				mutex.release()
-		threading.Timer(nextTime - time.time(), self.storeData).start()
-
-
-class Raspberry():
+class MachineLearning():
 	def __init__(self):
-		self.list = []
-		self.buffer = RB.RingBuffer(32)
-		self._aref = 3.3
-		self._vref = 5.0
-		self._RS = 0.1
-		self._cvref = 5.015
-		self._cdivide = 11.132
-		self.threads = []
-		self.headers = [' Vol  ', ' Cur  ', '  X1  ', '  Y1  ', '  Z1  ', '  X2  ', '  Y2  ', '  Z2  ', '  X3  ', '  Y3  ', '  Z3  ', '  X4  ', '  Y4  ', '  Z4  ']
-		self.time0 = [0]
-	def main(self):
-		try:
-			#set up port connection
-			self.port=serial.Serial("/dev/serial0", baudrate=115200)
-			self.port.reset_input_buffer()
-			self.port.reset_output_buffer()
+		self.currIndex = 0
+		self.actions = []
+		self.actionStart = None
+		self.actionEnd = None
+		self.num = 0
+		self.idle = 2
+		self.predictedAction = None
+		self.window_size = 150
 
-			#initialize all threads
-			commThread = ReceiveData(self.buffer, self.port, self.time0, 0.004)                           #time to send data should be a bit fast than sample rate
-			storageThread = StoreData(self.port, self.buffer, self.list, self._aref, \
-						self._vref, self._RS, self._cvref, self._cdivide, self.headers, 0.04)    #at most comm period * bufferSize
+	def run(self):
 
-			self.threads.append(commThread)
-			self.threads.append(storageThread)
+		le = self.labelling()
+		train_features, train_output = self.setup(le, self.window_size)
+		knn = KNeighborsClassifier(n_neighbors=5).fit(train_features, train_output)
+		print("setup complete")
+		self.ml(knn, le)
 
-			#start all thread
-			for thread in self.threads:
-				thread.daemon = True
-				thread.start()
+	def overlap_segment(self, data, window_size):
+		N = data.shape[0]
+		dim = data.shape[1]
+		K = int(N/window_size)
+		halfwindow = math.ceil(window_size/3.0)
+		R = int((N-K*window_size)/halfwindow)
+		print(R)
+		segments = np.empty((K*3+R-2, window_size, dim))
+		for i in range(K):
+			segment = data[i*window_size:i*window_size+window_size,:]
+			segments[i*3] = np.vstack(segment)
+			if (i!=K-1) or R>0:
+				segment = data[i*window_size+halfwindow:i*window_size+window_size+halfwindow,:]
+				segments[i*3+1] = np.vstack(segment)
+			if (i!=K-1) or R>1:
+				segment = data[i*window_size+halfwindow*2:i*window_size+window_size+halfwindow*2,:]
+				segments[i*3+2] = np.vstack(segment)
+		return segments
 
-			#prevent program exit
-			while True:
-				time.sleep(0.001)
 
-        	except KeyboardInterrupt:
-			time1 = int(round(time.time()*1000))
-			print("time elapsed: " + str(time1-self.time0[0]))
-#			for sample in self.list:
-#				print(", ".join("%.2f"%s for s in sample))
-			print("sample size: " + str(len(self.list)))
-			file = str(sys.argv[1])
-			f = open(file, 'w') 
-			try:
-				f_csv = csv.DictWriter(f, self.headers)
-				f_csv.writeheader()
-				f_csv.writerows(self.list)
-			finally:
-				f.close()
-			sys.exit(1)
+	def labelling(self):
+		le = preprocessing.LabelEncoder()
+		le.fit(['busdriver','frontback','idle','jumping','sidestep','wavehand'])
+		#print(le.classes_)
+		le.transform(['busdriver','frontback','idle','jumping','sidestep','wavehand'])
+		#print(le.transform(['busdriver','frontback','idle','jumping','sidestep','wavehand']))
+		return le
 
+	def setup(self, le, window_size):
+		df = pd.read_csv('features.csv', header=None)
+		train_features = df.values
+		#print(train_features)
+		df = pd.read_csv('moves.csv', header=None)
+		train_output = df.values
+		#print(train_output)
+
+		return train_features, train_output
+
+	def data_processing(self, data, window_size):
+		## assume list object is called data
+		x_data = np.asarray(data)
+		normalized_X = preprocessing.normalize(x_data)
+		x = self.overlap_segment(normalized_X, window_size)
+		return x
+
+	def feature_extraction(self, x_data):
+		layers = x_data.shape[0]
+		rows = x_data.shape[1]
+		cols = x_data.shape[2]
+		features = []
+
+		for i in range(layers):
+			slice_layer = x_data[i,::]
+			row = []
+			for j in range(cols):
+				temp_layer = slice_layer[:,j]
+				std = np.std(temp_layer)
+				row = np.append(row, [std])
+				mean = np.mean(temp_layer)
+				row = np.append(row, [mean])
+				median = np.median(temp_layer)
+				row = np.append(row, [median])
+			features = np.append(features, row)
+		features = features.reshape(layers, cols*3)
+
+		#df = pd.DataFrame(features)
+		#df.to_csv("features.csv")
+		return features
+
+	def therealprediction(self, le):
+		window = 4
+
+		if (self.num == 0) and (len(self.actions)>3):
+			for i in range(window,len(self.actions)):
+				mode, count = md(self.actions[i-window:i])
+				if not self.actionStart and (mode != self.idle):
+					self.actionStart = i-window
+					while (self.actions[self.actionStart] == self.idle):
+						self.actionStart += 1
+				if self.actionStart and not self.actionEnd and (mode == self.idle):
+					self.actionEnd = i-1
+					while (self.actions[self.actionEnd] == self.idle):
+						self.actionEnd -= 1
+				self.num += 1
+		elif (len(self.actions)>3):
+			for i in range(self.num+window,len(self.actions)):
+				mode, count = md(self.actions[i-window:i])
+				if (mode != self.idle):
+					self.actionStart = i-window
+					while (self.actions[self.actionStart] == self.idle):
+						self.actionStart += 1
+				if self.actionStart and not self.actionEnd and (mode == self.idle):
+					self.actionEnd = i-1
+					while (self.actions[self.actionEnd] == self.idle):
+						self.actionEnd -= 1
+				self.num += 1
+
+		if self.actionEnd:
+			mode, count = md(self.actions[self.actionStart:self.actionEnd+1])
+			self.predictedAction = le.inverse_transform([int(mode)])
+			self.actions = []
+			#self.actions = self.actions[self.actionEnd+1:len(self.actions)]
+			self.actionStart = None
+			self.actionEnd = None
+			self.num = 0
+
+	def ml(self, knn, le):
+		#nextTime = time.time() + self.period
+		#length = len(self.list)
+		#data = self.list[self.currIndex:length]
+		df = pd.read_csv('testdata2.csv', header=None)
+		data = df.values
+
+		
+		x = self.data_processing(data, self.window_size)
+		#self.currIndex = length
+		feature = self.feature_extraction(x)
+		pred = knn.predict(feature)
+		#print(pred)
+		self.actions = self.actions + list(pred)
+		print(self.actions)
+		print(len(self.actions))
+		self.therealprediction(le)
+		if self.predictedAction:
+			print(self.predictedAction)
+			#dheeraj does something
+			self.predictedAction = None
+		#threading.Timer(nextTime - time.time(), self.ml(knn, le)).start()
 
 
 if __name__ == '__main__':
-	pi = Raspberry()
-	pi.main()
+	ml = MachineLearning()
+	ml.run()
