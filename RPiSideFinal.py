@@ -163,18 +163,20 @@ class MachineLearning(threading.Thread):
 			feature = self.feature_extraction(x)
 			pred = self.knn.predict(feature)
 			action = self.le.inverse_transform(pred)
-			print(action)
+			#print(action)
 			self.actions = self.actions + list(pred)
 			self.therealprediction()
-			actionLock.acquire()
+			
 			if self.predictedAction:
 				self.list[:] = []
 				length = 0
-				self.q.put(self.predictedAction)
+				actionLock.acquire()
+				self.q.put(str(self.[predictedAction[0]]))
+				actionLock.release()
 				print(self.predictedAction)
 				#dheeraj does something
 				self.predictedAction = None
-			actionLock.release()
+				
 		self.currIndex = length
 		threading.Timer(nextTime-time.time(), self.ml).start()
 
@@ -213,7 +215,7 @@ class StoreData(threading.Thread):
 		self._mvG = _aref/10.0
 		self._vref = _vref            #voltage reference for current sensor
 		self.RS = _RS                 #shunt resistor value (in ohms)
- 		self._cvref = _cvref          #calibrated voltage reference for voltage sensor
+		self._cvref = _cvref          #calibrated voltage reference for voltage sensor
 		self._cdivide = _cdivide      #calibrated voltage divide for voltage sensor
 		self.headers = headers
 		self.period = period
@@ -240,13 +242,13 @@ class StoreData(threading.Thread):
 							+ [s*self._vref/1023.0/(10*self.RS) for s in data[2:3]])
 					sample = ([((s<<2) * self._aref / 1024.0 - self._bias) / self._mvG for s in data[3:-1]])
 #					print(", ".join("%.2f"%s for s in sample))
-      				self.list.append(sample)
-  					averageCurrent = (averageCurrent*(len(self.volCurList)-1) + self.volCurList[len(self.volCurList)-1][1])/len(self.volCurList)
-  					averageVoltage = (averageVoltage*(len(self.volCurList)-1) + self.volCurList[len(self.volCurList)-1][0])/len(self.volCurList)
-      				energy = energy + (averageVoltage * averageCurrent)*(time.time()-timePrev)
-      				timePrev = time.time()
+					self.list.append(sample)
+					averageCurrent = (averageCurrent*(len(self.volCurList)-1) + self.volCurList[len(self.volCurList)-1][1])/len(self.volCurList)
+					averageVoltage = (averageVoltage*(len(self.volCurList)-1) + self.volCurList[len(self.volCurList)-1][0])/len(self.volCurList)
+					energy = energy + (averageVoltage * averageCurrent)*(time.time()-timePrev)
+					timePrev = time.time()
 					self.nextID = (data[0] + 1)%self.bufferSize
-               			else:
+						else:
 					ack = False                                                  #some samples has problem
 					break
 			if ack:
@@ -267,39 +269,39 @@ class StoreData(threading.Thread):
 		threading.Timer(nextTime - time.time(), self.storeData).start()
 
 class ClientCommunication:
-    def __init__(self,predAction,voltage,current,power,cumpower,host, port, period):
-        threading.Thread.__init__(self)
-        self.period = period
-        self.HOST = host  #"172.20.10.2"
-        self.PORT = int(port)  #4957
-        self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.s.connect((self.HOST, self.PORT))
-        self.bs = 32
-        self.key = "1234567890123456"
-        self.predAction = predAction
-        self.voltage = voltage
-        self.current = current
-        self.power = power
-        self.cumpower=cumpower
-        self.formattedplaintext = "#"
+	def __init__(self,predAction,voltage,current,power,cumpower,host, port, period):
+		threading.Thread.__init__(self)
+		self.period = period
+		self.HOST = host  #"172.20.10.2"
+		self.PORT = int(port)  #4957
+		self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		self.s.connect((self.HOST, self.PORT))
+		self.bs = 32
+		self.key = "1234567890123456"
+		self.predAction = predAction
+		self.voltage = voltage
+		self.current = current
+		self.power = power
+		self.cumpower=cumpower
+		self.formattedplaintext = "#"
 
-    def encryptText(self, plainText, key):
-        raw = self.pad(plainText)
-        iv = Random.new().read(AES.block_size)  #cryptographically secured keys as opposed to pseudorandome in random class
-        cipher = AES.new(key,AES.MODE_CBC,iv)
-        return base64.b64encode(iv+cipher.encrypt(raw))
-    def pad(self, var1):
-        return var1 + (self.bs - len(var1)%self.bs)*chr(self.bs - len(var1)%self.bs)
+	def encryptText(self, plainText, key):
+		raw = self.pad(plainText)
+		iv = Random.new().read(AES.block_size)  #cryptographically secured keys as opposed to pseudorandome in random class
+		cipher = AES.new(key,AES.MODE_CBC,iv)
+		return base64.b64encode(iv+cipher.encrypt(raw))
+	def pad(self, var1):
+		return var1 + (self.bs - len(var1)%self.bs)*chr(self.bs - len(var1)%self.bs)
 
-    def run(self):
-        self.sendData()
-    def sendData(self):
-        nextTime = time.time() + self.period
-    	self.formattedplaintext = (self.formattedplaintext+ self.predAction + "|"+self.voltage+"|"+self.current+"|"+self.power+"|"+self.cumpower+"|")
-        finalString = self.encryptText(self.formattedplaintext, self.key)
-        self.s.send(finalString)
-        time.sleep(0.1)
-        threading.Timer(nextTime - time.time() - 0.1, self.sendData).start()
+	def run(self):
+		self.sendData()
+	def sendData(self):
+		nextTime = time.time() + self.period
+		self.formattedplaintext = (self.formattedplaintext+ self.predAction + "|"+self.voltage+"|"+self.current+"|"+self.power+"|"+self.cumpower+"|")
+		finalString = self.encryptText(self.formattedplaintext, self.key)
+		self.s.send(finalString)
+		time.sleep(0.1)
+		threading.Timer(nextTime - time.time() - 0.1, self.sendData).start()
 
 class Raspberry():
 	def __init__(self):
@@ -327,9 +329,9 @@ class Raspberry():
 		self.knn = KNeighborsClassifier(n_neighbors=5).fit(train_features, train_output)
 	def setUpComms(self):
 		print ("Please enter the ip address: ")
-        self.socket.append(sys.argv[1])
-        print ("Please enter the port number: ")
-        self.socket.append(sys.argv[2])
+		self.socket.append(sys.argv[1])
+		print ("Please enter the port number: ")
+		self.socket.append(sys.argv[2])
 	def main(self):
 		try:
 			self.setUpModel()
@@ -343,9 +345,9 @@ class Raspberry():
 
 			#Handshaking, keep saying 'H' to Arduino unitl Arduion reply 'A'
 			while(self.port.in_waiting == 0 or self.port.read() != 'A'):
-        			print 'Try to connect to Arduino'
-        			self.port.write('H')
-        			time.sleep(1)
+					print 'Try to connect to Arduino'
+					self.port.write('H')
+					time.sleep(1)
 			self.port.write('A');
 			print 'Connected'
 			self.time0 = int(round(time.time()*1000))
@@ -376,7 +378,7 @@ class Raspberry():
 			while True:
 				time.sleep(0.001)
 
-        	except KeyboardInterrupt:
+			except KeyboardInterrupt:
 			time1 = int(round(time.time()*1000))
 #			for sample in self.list:
 #				print(", ".join("%.2f"%s for s in sample))
