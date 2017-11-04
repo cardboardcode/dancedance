@@ -1,148 +1,89 @@
- // Accelerometers -----------------------------------------
- struct accelerometer {
-  
-  int xpin;
-  int ypin;
-  int zpin;
-  
-  };
-  
- const int x1 = A0;                  
- const int y1 = A1;                  
- const int z1 = A2;                  
-
- const int x2 = A3;                  
- const int y2 = A4;                  
- const int z2 = A5;                  
-
- const int x3 = A6;                  
- const int y3 = A7;                  
- const int z3 = A8;                  
-
- const int x4 = A9;                  
- const int y4 = A10;                  
- const int z4 = A11;                  
-
-double x_value[4];
-double y_value[4];
-double z_value[4];
-
-double x_gbench[4];
-double y_gbench[4];
-double z_gbench[4];
-
 /*
- * Array Positions Indicators --------------------------------------------------------------------
- * 0 = arm_left
- * 1 = arm_right
- * 2 = leg_left
- * 3 = leg_right
- */
-struct accelerometer accel[4];
+ADXL335 Accelerometer Demo
+Derek Chafin
+September 22, 2011
+Public Domain
 
-//Current Sensor-------------------------------------------
-const int current_measure_pin = A12;
-const int RS = 10;
-const int VOLTAGE_REF = 5;
+Demonstrates how to use the ADXL335 library
 
-float sensorValue ;
-float current = 0.0;
+Pin Connections:
 
-//Voltage Sensor-------------------------------------------
+analog 0: connected to x-axis
+analog 1: connected to y-axis
+analog 2: connected to z-axis
+aref: connected to +3.3V
+*/
+
+#include <ADXL335.h>
+
+const int pin_x0 = A0;
+const int pin_y0 = A1;
+const int pin_z0 = A2;
+
+const int pin_x1 = A3;
+const int pin_y1 = A4;
+const int pin_z1 = A5;
+
+const int pin_x2 = A6;
+const int pin_y2 = A7;
+const int pin_z2 = A8;
+
+const int pin_x3 = A9;
+const int pin_y3 = A10;
+const int pin_z3 = A11;
+
+const float aref = 3.3;
+
+ADXL335 accel0(pin_x0, pin_y0, pin_z0, aref);
+ADXL335 accel1(pin_x1, pin_y1, pin_z1, aref);
+ADXL335 accel2(pin_x2, pin_y2, pin_z2, aref);
+ADXL335 accel3(pin_x3, pin_y3, pin_z3, aref);
+
+//Current Sensor
+
+// Constants
+const int SENSOR_PIN = A13;  // Input pin for measuring Vout
+const float RS = 0.1;          // Shunt resistor value (in ohms)
+const int VOLTAGE_REF = 5;  // Reference voltage for analog read
+
+// Global Variables
+float sensorValue;   // Variable to store value from analog read
+float current;       // Calculated current value
+
+//Voltage Sensor
+
+// number of analog samples to take per reading
 #define NUM_SAMPLES 10
 
 int sum = 0;                    // sum of samples taken
 unsigned char sample_count = 0; // current sample number
 float voltage = 0.0;            // calculated voltage
 
-//Function Header Declaration------------------------------
-void updateAccel(void);
-void updateCurrent(void);
-void updateVoltage(void);
-void initializeAccel(void);
-void updateBatch(void);
-void printBatch(void);
 
-void initializeGB(){
-
-    
-   //update x_value array
-  for (int i = 0; i < 4; i++){
-    x_gbench[i] = analogRead(accel[i].xpin);  
-  }
-
-  //update y_value array
-  for (int i = 0; i < 4; i++){
-    y_gbench[i] = analogRead(accel[i].ypin);  
-  }
-
-  //update z_value array
-  for (int i = 0; i < 4; i++){
-    z_gbench[i] = analogRead(accel[i].zpin);  
-  }
+void setup()
+{
+  Serial.begin(9600);
   
-  
-  }
-
-void initializeAccel(){
-
-  accel[0].xpin = x1;
-  accel[0].ypin = y1;
-  accel[0].zpin = z1;
-  
-  accel[1].xpin = x2;
-  accel[1].ypin = y2;
-  accel[1].zpin = z2;
-
-  accel[2].xpin = x3;
-  accel[2].ypin = y3;
-  accel[2].zpin = z3;
-
-  accel[3].xpin = x4;
-  accel[3].ypin = y4;
-  accel[3].zpin = z4;
-  
-  }
-
-void updateAccel(){
-  
-   //update x_value array
-  for (int i = 0; i < 4; i++){
-    x_value[i] = analogRead(accel[i].xpin);
-    delay(5);  
-  }
-
-  //update y_value array
-  for (int i = 0; i < 4; i++){
-    y_value[i] = analogRead(accel[i].ypin);  
-    delay(5);
-  }
-
-  //update z_value array
-  for (int i = 0; i < 4; i++){
-    z_value[i] = analogRead(accel[i].zpin);  
-    delay(5);
-  }
-  
-  }
+  Serial.println("X0,\tY0,\tZ0,\tX1,\tY1,\tZ1,X2,\tY2,\tZ2,X3,\tY3,\tZ3,");
+}
 
 void updateCurrent(){
-
-  sensorValue = analogRead(current_measure_pin);
   
+// Read a value from the INA169 board
+  sensorValue = analogRead(SENSOR_PIN);
+
   // Remap the ADC value into a voltage number (5V reference)
   sensorValue = (sensorValue * VOLTAGE_REF) / 1023;
 
   // Follow the equation given by the INA169 datasheet to
   // determine the current flowing through RS. Assume RL = 10k
   // Is = (Vout x 1k) / (RS x RL)
-  current = sensorValue / (10 * RS);
+  current = sensorValue / (10 * RS);  
   
-  }
+}
 
 void updateVoltage(){
-  
-  // take a number of analog samples and add them up
+    // take a number of analog samples and add them up
     while (sample_count < NUM_SAMPLES) {
         sum += analogRead(A2);
         sample_count++;
@@ -151,127 +92,202 @@ void updateVoltage(){
     // calculate the voltage
     // use 5.0 for a 5.0V ADC reference voltage
     // 5.015V is the calibrated reference voltage
-
     voltage = ((float)sum / (float)NUM_SAMPLES * 5.015) / 1024.0;
-    
+    // send voltage for display on Serial Monitor
     // voltage multiplied by 11 when using voltage divider that
     // divides by 11. 11.132 is the calibrated voltage divide
     // value
-
-    voltage = voltage * 11.132;
     
     sample_count = 0;
-    sum = 0;
-    
-  }
-
-void updateBatch(){
-
-  updateAccel();
-  
-  updateCurrent();
-
-  updateVoltage();
-  
-  }
-
-/*
- * Printing Format
- * eg. 
- * Accel *****
- * arm_left    |arm_right   |leg_left    |leg_right   |      
- * x = 255.00; |x = 255.00; |x = 255.00; |x = 255.00; |
- * y = 255.00; |y = 255.00; |y = 255.00; |y = 255.00; |
- * z = 255.00; |z = 255.00; |z = 255.00; |z = 255.00; |
- * 
- * Current = 2.00
- * Voltage = 6V
- */
-void printBatch(){
-  
-//  Serial.println("Accel *****");
-//
-//  //Print header label as first row
-//  Serial.print("arm_left    |");
-//  Serial.print("arm_right   |");
-//  Serial.print("leg_left    |");
-//  Serial.print("leg_right   |");
-//  Serial.println();
-//  
-//  //Print x-values of accelerometer as second row
-//  for (int i = 0; i < 4; i++){
-//    Serial.print("x = ");
-//    Serial.print(x_value[i]);
-//    Serial.print("; |");
-//  }
-//  Serial.println();
-//  //Print y-values of accelerometer as third row
-//  for (int i = 0; i < 4; i++){
-//    Serial.print("y = ");
-//    Serial.print(y_value[i]);
-//    Serial.print("; |");
-//  }
-//Serial.println();
-//  //Print z-values of accelerometer as fourth row
-//  for (int i = 0; i < 4; i++){
-//    Serial.print("z = ");
-//    Serial.print(z_value[i]);
-//    Serial.print("; |");
-//  }
-//  Serial.println();
-//  Serial.println();
-  Serial.print("Current = ");
-  Serial.println(current,3);
-//
-//  Serial.print("Voltage = ");
-//  Serial.println(voltage);
-  
-  }
-
-void generateData(){
-
-    for (int i = 0; i < 4; i++){
-//    Serial.print("x");
-//    Serial.print(i + 1);
-//    Serial.print(" = ");
-    Serial.print(x_value[i]);
-    Serial.print(" ");
-//    Serial.print("y");
-//    Serial.print(i + 1);
-//    Serial.print(" = ");
-    Serial.print(y_value[i]);
-    Serial.print(" ");
-//    Serial.print("z");
-//    Serial.print(i + 1);
-//    Serial.print(" = ");
-    Serial.print(z_value[i]);
-    Serial.print(" ");
-    
-  }
-    
-  }
-
-void setup() {
-  // initialize the serial communications:
-  Serial.begin(9600);
-  
-  // initialize accelerometers pins
-  initializeAccel();
-
-  // initialize gravitational biase array
-  initializeGB();
-  
+    sum = 0;  
 }
 
-void loop() {
+void loop()
+{
+  //this is required to update the values
+  accel0.update();
+  accel1.update();
+  accel2.update();
+  accel3.update();
   
-  updateBatch();
+  //this tells us how long the string is
+  int string_width;
 
-  printBatch();
+  float x0;
+  float y0;
+  float z0;
   
-//  generateData();
+  float x1;
+  float y1;
+  float z1;
+
+  float x2;
+  float y2;
+  float z2;
   
-  Serial.println();
+  float x3;
+  float y3;
+  float z3;
+  
+  //for these variables see wikipedia's
+  //definition of spherical coordinates
+  float rho;
+  float phi;
+  float theta;  
+
+//  accel0.setThreshold(0.3);
+  
+  x0 = accel0.getX();
+  y0 = accel0.getY();
+  //if the project is laying flat and top up the z axis reads ~1G
+  z0 = accel0.getZ();
+
+  x1 = accel1.getX();
+  y1 = accel1.getY();
+  //if the project is laying flat and top up the z axis reads ~1G
+  z1 = accel1.getZ();
+
+  x2 = accel2.getX();
+  y2 = accel2.getY();
+  //if the project is laying flat and top up the z axis reads ~1G
+  z2 = accel2.getZ();
+
+  x3 = accel3.getX();
+  y3 = accel3.getY();
+  //if the project is laying flat and top up the z axis reads ~1G
+  z3 = accel3.getZ();
+  
+//  rho = accel0.getRho();
+//  phi = accel0.getPhi();
+//  theta = accel0.getTheta();
+
+  Serial.print(formatFloat(x0, 2, &string_width));
+  Serial.print(",\t");
+  Serial.print(formatFloat(y0, 2, &string_width));
+  Serial.print(",\t");
+  Serial.print(formatFloat(z0, 2, &string_width));
+  Serial.print(",\t");
+
+  Serial.print(formatFloat(x1, 2, &string_width));
+  Serial.print(",\t");
+  Serial.print(formatFloat(y1, 2, &string_width));
+  Serial.print(",\t");
+  Serial.print(formatFloat(z1, 2, &string_width));
+  Serial.print(",\t");
+
+  Serial.print(formatFloat(x2, 2, &string_width));
+  Serial.print(",\t");
+  Serial.print(formatFloat(y2, 2, &string_width));
+  Serial.print(",\t");
+  Serial.print(formatFloat(z2, 2, &string_width));
+  Serial.print(",\t");
+
+  Serial.print(formatFloat(x3, 2, &string_width));
+  Serial.print(",\t");
+  Serial.print(formatFloat(y3, 2, &string_width));
+  Serial.print(",\t");
+  Serial.print(formatFloat(z3, 2, &string_width));
+  Serial.print(",\t");
+  Serial.println("");
+
+  // Output value (in amps) to the serial monitor to 3 decimal
+  // places
+  Serial.print(current, 5);
+  Serial.println(" A");
+
+  Serial.print(voltage * 11.132);
+  Serial.println (" V");
+  
+//  Serial.print(formatFloat(rho, 2, &string_width));
+//  Serial.print(",\t");
+//  Serial.print(formatFloat(phi, 2, &string_width));
+//  Serial.print(",\t");
+//  Serial.print(formatFloat(theta, 2, &string_width));
+//  Serial.println("");
   
   delay(100);
+}
+
+//this function was taken from my format float library
+String formatFloat(double value, int places, int* string_width)
+{
+  //if value is positive infinity
+  if (isinf(value) > 0)
+  {
+    return "+Inf";
+  }
+    
+  //Arduino does not seem to have negative infinity
+  //keeping this code block for reference
+  //if value is negative infinity
+  if(isinf(value) < 0)
+  {
+    return "-Inf";
+  }
+  
+  //if value is not a number
+  if(isnan(value) > 0)
+  {
+    return "NaN";
+  }
+  
+  //always include a space for the dot
+  int num_width = 1;
+
+  //if the number of decimal places is less than 1
+  if (places < 1)
+  {
+    //set places to 1
+    places = 1;
+    
+    //and truncate the value
+    value = (float)((int)value);
+  }
+  
+  //add the places to the right of the decimal
+  num_width += places;
+  
+  //if the value does not contain an integral part  
+  if (value < 1.0 && value > -1.0)
+  {
+    //add one for the integral zero
+    num_width++;
+  }
+  else
+  {
+
+    //get the integral part and
+    //get the number of places to the left of decimal
+    num_width += ((int)log10(abs(value))) + 1;
+  }
+  //if the value in less than 0
+  if (value < 0.0)
+  {
+    //add a space for the minus sign
+    num_width++;
+  }
+  
+  //make a string the size of the number
+  //plus 1 for string terminator
+  char s[num_width + 1]; 
+  
+  //put the string terminator at the end
+  s[num_width] = '\0';
+  
+  
+  //initalize the array to all zeros
+  for (int i = 0; i < num_width; i++)
+  {
+    s[i] = '0';
+  }
+  
+  //characters that are not changed by 
+  //the function below will be zeros
+  
+  //set the out variable string width
+  //lets the caller know what we came up with
+  *string_width = num_width;
+  
+  //use the avr-libc function dtosrtf to format the value
+  return String(dtostrf(value,num_width,places,s));  
 }

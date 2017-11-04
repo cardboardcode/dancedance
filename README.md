@@ -14,7 +14,7 @@
 
 ## <p align="center"> Progress </p>
 
-![](resources/images/progress/PROGRESS_BAR6.png)
+![](resources/images/progress/PROGRESS_BAR8.png)
 
 
 #### Objective: 
@@ -33,10 +33,10 @@ Week No. | Happening | Remarks
 ~5th Week~ | ~Feedback on Design~ | Bam!
 ~6th Week~ | ~Progress Checkpoint [SOFTWARE & COMMS Team]~ | Kaploow!
 ~Recess Week~ | ~What is Recess Week? Elaborating on Individual Design~ | Shazam!
-7th Week | Individual Components(hw,comms,sw) |
-8th Week |  |
-9th Week |  |
-10th Week |  |
+~7th Week~ | ~Individual Components(hw,comms,sw)~ | PheeBoing!
+~8th Week~ | Rush for Wireless Suit Implementation |
+9th Week | Clocking data for Machine Learning |
+10th Week | Clocking data for Machine Learning |
 11th Week | Baseline Evaluation (5 Moves) |
 12th Week | |
 13th Week | Final Evaluation (All Moves) |
