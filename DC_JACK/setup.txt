@@ -1,0 +1,4 @@
+Schematics:
+https://electronics.stackexchange.com/questions/141897/dc-power-supply-jack-connector-pinout
+
+https://learn.sparkfun.com/tutorials/connector-basics
