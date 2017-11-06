@@ -7,7 +7,7 @@
 
 ### BASICS
 
-> ![](images/wavehand.gif) ![](images/busdriver.gif) ![](images/frontback.gif) ![](images/sidestep.gif) ![](images/jumping.gif)
+> ![](images/handwave.gif) ![](images/busdriver.gif) ![](images/frontback.gif) ![](images/sidestep.gif) ![](images/jumping.gif)
 
 1. Wavehand  |  2. Bus Driver   |  3. Front Back | 4. Side-Step | 5. Jumping
 
