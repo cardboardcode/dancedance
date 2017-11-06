@@ -14,7 +14,7 @@
 
 ### ADVANCED
 
-> ![](images/jumpingjack.gif) ![](images/turnclap.gif) ![](images/squareturnclap.gif) ![](images/window.gif) ![](images/windows360.gif)
+> ![](images/jumpingjack.gif) ![](images/turnclap.gif) ![](images/squatturnclap.gif) ![](images/window.gif) ![](images/windows360.gif)
 
 6. Jumping Jack  |  7. Turn Clap   |  8. Squat Turn Clap | 9. Windows | 10. Windows 360
 
