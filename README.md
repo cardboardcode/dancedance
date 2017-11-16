@@ -14,7 +14,7 @@
 
 ## <p align="center"> Progress </p>
 
-![](resources/images/progress/PROGRESS_BAR11.png)
+![](resources/images/progress/PROGRESS_BAR13.png)
 
 
 #### Objective: 
@@ -39,7 +39,7 @@ Week No. | Happening | Remarks
 ~10th Week~ | ~Clocking data for Machine Learning~ | Bing Batta Boom!
 ~11th Week~ | ~Baseline Evaluation (5 Moves)~ | Puh
 ~12th Week~ | ~Debugging and Training for Advanced Moves~ | Puh!
-13th Week | Final Evaluation (All Moves) |
+~13th Week~ | ~Final Evaluation (All Moves)~ | PUUUUUHHHHHHHH!!!!
 Reading Week |  |
 
 [req]: https://github.com/cardboardcode/dancedance/blob/master/resources/docs/CG3002-dance.pdf
