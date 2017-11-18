@@ -72,9 +72,9 @@ void startRecv();
 int8_t sendEvent;
 
 Timer t;
-unsigned long samplePeriod = 6;
-unsigned long sendPeriod = 6;
-unsigned long recvPeriod = 6;
+unsigned long samplePeriod = 4;
+unsigned long sendPeriod = 4;
+unsigned long recvPeriod = 4;
 unsigned long fastSendPeriod = 3;
 
 void setup() {
@@ -95,7 +95,7 @@ void setup() {
 
 	t.every(samplePeriod, sampleReading);
 	t.task(2, startSend, 1);
-	t.task(4, startRecv, 1);
+	t.task(3, startRecv, 1);
 }
 
 void loop()
@@ -135,81 +135,20 @@ void sampleReading() {
 		Serial.print("V");
 		t.stop(sendEvent);
 		sendEvent = t.every(fastSendPeriod, sendMessage);
-		Serial.println(sendEvent);
 	}else {
 		slotID = (slotID + 1) % bufferSize;
 	}
 	memcpy(frameBuffer[cfgFrame.frameID], &cfgFrame, frameLength);
-	//	Serial.print(slotID);
-	//	Serial.print(",");
-	//	Serial.print(vol);
-	//	Serial.print(",");
-	//	Serial.print(cur);
-	//	Serial.println(",");
-	//	Serial.print(x1);
-	//	Serial.print(",");
-	//	Serial.print(y1);
-	//	Serial.print(",");
-	//	Serial.print(z1);
-	//	Serial.print(",");
-	//	Serial.print(x2);
-	//	Serial.print(",");
-	//	Serial.print(y2);
-	//	Serial.print(",");
-	//	Serial.print(z2);
-	//	Serial.print(",");
-	//	Serial.print(x3);
-	//	Serial.print(",");
-	//	Serial.print(y3);
-	//	Serial.print(",");
-	//	Serial.print(z3);
-	//	Serial.print(",");
-	//	Serial.print(x4);
-	//	Serial.print(",");
-	//	Serial.print(y4);
-	//	Serial.print(",");
-	//	Serial.print(z4);
-	//	Serial.print(",");
-	//	Serial.println(cfgFrame.checkSum);
 }
 
 void sendMessage() {
 	if(sendID != slotID) {                                //some frame in the buffer
 		Serial3.write(frameBuffer[sendID], frameLength);
 		sendID = (sendID + 1) % bufferSize;
-//		//testing
-//		if(count == sendID) {
-//			TConfigFrame cfgFrame;
-//			cfgFrame.frameID = sendID;
-//			cfgFrame.sensor1X = 0;
-//			cfgFrame.sensor1Y = 0;
-//			cfgFrame.sensor1Z = 0;
-//			cfgFrame.sensor2X = 1;
-//			cfgFrame.sensor2Y = 1;
-//			cfgFrame.sensor2Z = 1;
-//			cfgFrame.sensor3X = 1;
-//			cfgFrame.sensor3Y = 1;
-//			cfgFrame.sensor3Z = 1;
-//			cfgFrame.sensor4X = 1;
-//			cfgFrame.sensor4Y = 1;
-//			cfgFrame.sensor4Z = 1;
-//			cfgFrame.checkSum = 200;
-//			unsigned char a[frameLength];
-//			memcpy(a, &cfgFrame, frameLength);
-//			Serial3.write(a, frameLength);
-//			count = ((count - 1) + bufferSize) % bufferSize;
-//		}
-	} else {                                                   //no more data, slow down the task
-		Serial.print("E");
-		t.stop(sendEvent);
-		sendEvent = t.every(sendPeriod, sendMessage);
-		Serial.println(sendEvent);
 	}
 }
 
 void receiveFeedback(){
-//	Serial.print("R ");
-//	Serial.println(millis());
 	if(Serial3.available()==2) {
 		ackByte = Serial3.read();
 		frameID = Serial3.read();         //next frame to be received
