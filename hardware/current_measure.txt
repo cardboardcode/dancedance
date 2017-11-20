@@ -1,3 +1,0 @@
-50mA for Arduino Mega
-120mA for Raspberry Pi
-
