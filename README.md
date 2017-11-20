@@ -5,6 +5,7 @@
 * [About Us][about]
 * [Development][dev]
 * [Data Sheets][data]
+* [Past Schedule][schedule]
 
 <p align="center">
   <img src="resources/images/main.gif">
@@ -21,27 +22,6 @@
 
 > Design a dance-tracker which detects the designated dance step listed below.
 
-
-## Schedule
-
-Week No. | Happening | Remarks
----|---|---
-~1st Week~ | ~Lecture: Project Overview~ | Done
-~2nd Week~ | ~Lecture: Introduction To Hardware Platform~ | Gone
-~3rd Week~ | ~Lecture: Communication and Firmware~ | Poof
-~4th Week~ | ~Design Report & Lecture: System Architecture & Machine Learning Basics~ | Boom!
-~5th Week~ | ~Feedback on Design~ | Bam!
-~6th Week~ | ~Progress Checkpoint [SOFTWARE & COMMS Team]~ | Kaploow!
-~Recess Week~ | ~What is Recess Week? Elaborating on Individual Design~ | Shazam!
-~7th Week~ | ~Individual Components(hw,comms,sw)~ | PheeBoing!
-~8th Week~ | ~Rush for Wireless Suit Implementation~ | Phoo!
-~9th Week~ | ~Clocking data for Machine Learning~ | Pah! 
-~10th Week~ | ~Clocking data for Machine Learning~ | Bing Batta Boom!
-~11th Week~ | ~Baseline Evaluation (5 Moves)~ | Puh
-~12th Week~ | ~Debugging and Training for Advanced Moves~ | Puh!
-~13th Week~ | ~Final Evaluation (All Moves)~ | PUUUUUHHHHHHHH!!!!
-Reading Week |  |
-
 [req]: https://github.com/cardboardcode/dancedance/blob/master/resources/docs/CG3002-dance.pdf
 
 [dance]:https://github.com/cardboardcode/dancedance/blob/master/resources/dancemoves.md
@@ -49,3 +29,4 @@ Reading Week |  |
 [about]:https://github.com/cardboardcode/dancedance/blob/master/resources/about.md
 [data]: https://github.com/cardboardcode/dancedance/blob/master/resources/data.md
 [dev]:https://github.com/cardboardcode/dancedance/blob/master/resources/dev.md
+[schedule]:https://github.com/cardboardcode/dancedance/blob/master/resources/schedule.md
