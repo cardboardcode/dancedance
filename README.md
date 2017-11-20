@@ -1,8 +1,7 @@
 ## Summary
 
-* [Requirements][req]
-* [Dance Moves][dance]
 * [About Us][about]
+* [Dance Moves][dance]
 * [Development][dev]
 * [Data Sheets][data]
 * [Past Schedule][schedule]
@@ -34,10 +33,7 @@
 	1. The device that is worn by the dancer has to be able to compute and sense the dance moves automatically
 	2. There are ten specific dance moves that have to be detected (with a personalized final move at the end).
 
-[req]: https://github.com/cardboardcode/dancedance/blob/master/resources/docs/CG3002-dance.pdf
-
 [dance]:https://github.com/cardboardcode/dancedance/blob/master/resources/dancemoves.md
-
 [about]:https://github.com/cardboardcode/dancedance/blob/master/resources/about.md
 [data]: https://github.com/cardboardcode/dancedance/blob/master/resources/data.md
 [dev]:https://github.com/cardboardcode/dancedance/blob/master/resources/dev.md
