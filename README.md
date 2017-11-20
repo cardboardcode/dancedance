@@ -22,7 +22,7 @@
 
 > The project that we are embarking on aims to create a wearable device that is able to detect dance moves. 
 
-#### System Functionalities
+#### System Functionalities:
 
 > ![](resources/images/use_case_diagram.png)
 
