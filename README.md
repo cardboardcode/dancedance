@@ -30,6 +30,7 @@
 > As seen in the above diagram, the system would first instruct the dancer to perform a specific dance move. Thereafter, the dancer would proceed to do the dance move instructed and the sensors, which are attached on the dancer, would gather data about the dancer’s movements. An Arduino system would be polling the data from the sensors and would send that data over to the Raspberry Pi to be processed. The data would be used to evaluate whether the dancer has performed the correct move. The outcome would be sent to the server laptop where it would feedback to the dancer if the correct move is performed.
 
 > There are two main objectives of this project:
+
 	1. The device that is worn by the dancer has to be able to compute and sense the dance moves automatically
 	2. There are ten specific dance moves that have to be detected (with a personalized final move at the end).
 
