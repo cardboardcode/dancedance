@@ -19,6 +19,12 @@
 6. Jumping Jack  |  7. Turn Clap   |  8. Squat Turn Clap | 9. Windows | 10. Windows 360
 
 
+## FINAL MOVE
+
+> ![](images/final_move1.png) ![](images/final_move2.png) ![](images/final_move3.png)
+
+Description: Stamp on the ground with your one leg twice and then gesture in such a way that means "I don't get it".
+
 [return]: https://github.com/cardboardcode/dancedance
 [supersize]: https://github.com/cardboardcode/dancedance/blob/master/resources/superdancemoves.md
 

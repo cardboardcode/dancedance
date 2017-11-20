@@ -21,7 +21,8 @@
 ![](images/use_case_diagram.png)
 > [Return to Top](#content)
 # Vizualisation
-![](images/wearable_draft.png)
+![](images/wearable_draft_front.png)
+![](images/wearable_draft_back.png)
 > [Return to Top](#content)
 
 [return]: https://github.com/cardboardcode/dancedance
